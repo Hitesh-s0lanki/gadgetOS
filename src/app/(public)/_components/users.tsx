@@ -54,7 +54,7 @@ export function Users() {
                   Built for the <span className="text-indigo-600">Builders</span>
                 </h2>
                 <p className="mt-4 text-lg text-slate-600">
-                    Whether you're writing code, designing flows, or learning how computers work, GadgetOS adapts to you.
+                    Whether you&apos;re writing code, designing flows, or learning how computers work, GadgetOS adapts to you.
                 </p>
             </div>
             

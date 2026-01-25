@@ -45,7 +45,7 @@ export function WebDemo() {
                  </h2>
 
                  <p className="text-lg text-slate-400 leading-relaxed mb-8">
-                    No downloads. No installation. We've compiled the core GadgetOS kernel to WebAssembly so you can try the future of computing right now.
+                    No downloads. No installation. We&apos;ve compiled the core GadgetOS kernel to WebAssembly so you can try the future of computing right now.
                  </p>
 
                  <div className="flex flex-col sm:flex-row gap-4">
@@ -135,7 +135,7 @@ export function WebDemo() {
                                    </div>
                                     <div className="flex gap-2">
                                        <span className="text-green-400">✔</span>
-                                       <span className="text-white">Done! Created 'Q4_Plan' directory with 3 files.</span>
+                                       <span className="text-white">Done! Created &apos;Q4_Plan&apos; directory with 3 files.</span>
                                    </div>
                                    <div className="flex gap-2 pt-2">
                                        <span className="text-green-400">user@gadgetos</span>

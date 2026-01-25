@@ -46,7 +46,7 @@ export function Hero() {
         {/* Main Heading */}
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.1 }}
           className="mx-auto max-w-4xl text-5xl font-bold tracking-tight text-slate-900 sm:text-7xl"
         >
@@ -57,7 +57,7 @@ export function Hero() {
         {/* Subheading */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.2 }}
           className="mx-auto mt-8 max-w-2xl text-lg text-slate-600 leading-relaxed sm:text-xl"
         >
@@ -68,7 +68,7 @@ export function Hero() {
         {/* CTA Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.3 }}
           className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
         >
@@ -92,7 +92,7 @@ export function Hero() {
         {/* Hero Visual / Code Snippet */}
         <motion.div
            initial={{ opacity: 0, scale: 0.9, y: 40 }}
-           animate={{ opacity: 1, scale: 1, y: 0 }}
+           animate={inView ? { opacity: 1, scale: 1, y: 0 } : {}}
            transition={{ duration: 0.8, delay: 0.4 }}
            className="mt-20 relative mx-auto max-w-5xl rounded-2xl border border-slate-200 bg-slate-50/50 p-2 shadow-2xl backdrop-blur-sm"
         >

@@ -40,7 +40,7 @@ export default function WaitingList() {
              Early Access
            </span>
             <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-              Don't miss out, join the queue
+              Don&apos;t miss out, join the queue
             </h2>
             <p className="mx-auto mt-4 max-w-lg text-lg text-slate-600">
               Get priority access to GadgetOS Web Demo, early features, and help

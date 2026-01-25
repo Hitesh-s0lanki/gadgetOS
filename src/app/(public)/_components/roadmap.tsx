@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "motion/react";
-import { CheckCircle2, Circle, CircleDot } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 
 const MILESTONES = [
   {
@@ -197,7 +197,15 @@ export default function Roadmap() {
   );
 }
 
-function MilestoneCard({ milestone, className = "" }: { milestone: any; className?: string }) {
+function MilestoneCard({ milestone, className = "" }: { 
+    milestone: {
+        title: string;
+        date: string;
+        status: string;
+        items: string[];
+    }; 
+    className?: string 
+}) {
     return (
         <div className={`group relative rounded-2xl bg-white p-6 shadow-xl shadow-indigo-100/50 ring-1 ring-slate-200/60 transition-all hover:shadow-2xl hover:shadow-indigo-200/50 hover:-translate-y-1 ${className}`}>
             <h3 className="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">

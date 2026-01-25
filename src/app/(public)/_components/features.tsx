@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "motion/react";
-import { FolderSearch, Terminal, Mic, CheckCircle2, Command, Sparkles } from "lucide-react";
+import { FolderSearch, Terminal, Mic, CheckCircle2, Sparkles } from "lucide-react";
 
 const FEATURES = [
   {
@@ -118,7 +118,7 @@ const FEATURES = [
              </div>
              
              <div className="relative z-10 mt-8 bg-white/80 backdrop-blur px-4 py-2 rounded-full border border-slate-200 shadow-sm">
-                <p className="text-sm font-medium text-slate-600">"Create a new project..."</p>
+                <p className="text-sm font-medium text-slate-600">&quot;Create a new project...&quot;</p>
              </div>
         </div>
     )
@@ -171,7 +171,18 @@ export function Features() {
   );
 }
 
-function FeatureRow({ feature: f, index, inView }: { feature: any; index: number; inView: boolean }) {
+function FeatureRow({ feature: f, index, inView }: { 
+    feature: {
+        category: string;
+        icon: React.ElementType;
+        headline: string;
+        copy: string;
+        highlights: string[];
+        illustration: React.ReactNode;
+    }; 
+    index: number; 
+    inView: boolean 
+}) {
     const isEven = index % 2 === 0;
 
     return (

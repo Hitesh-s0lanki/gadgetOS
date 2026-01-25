@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "motion/react";
-import { Maximize2, Minimize2, MoreHorizontal, Command, Search, Wifi, Battery, BatteryCharging } from "lucide-react";
+import { MoreHorizontal, Command, Search } from "lucide-react";
 
 export function Product() {
   const ref = useRef<HTMLElement>(null);
@@ -44,10 +44,10 @@ export function Product() {
                 
                 <div className="space-y-6 text-lg text-slate-600 leading-relaxed">
                     <p>
-                        GadgetOS isn't just another layer on top of Linux. It's a fundamental reimagining of how humans and computers interact.
+                        GadgetOS isn&apos;t just another layer on top of Linux. It&apos;s a fundamental reimagining of how humans and computers interact.
                     </p>
                     <p>
-                        By replacing rigid file hierarchies with semantic understanding, and CLI flags with natural conversations, we're building the first operating system designed for the AI era.
+                        By replacing rigid file hierarchies with semantic understanding, and CLI flags with natural conversations, we&apos;re building the first operating system designed for the AI era.
                     </p>
                 </div>
 
