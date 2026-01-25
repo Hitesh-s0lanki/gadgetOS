@@ -14,7 +14,7 @@ export function Hero() {
     <section
       id="hero"
       ref={ref}
-      className="min-h-screen relative overflow-hidden border-b border-border/40 bg-gradient-to-b from-muted/30 to-background px-4 pt-16 pb-24 sm:px-6 flex justify-center items-center"
+      className="min-h-screen relative overflow-hidden border-b border-border/40 bg-gradient-to-b from-muted/30 to-background px-4 pt-32 pb-24 sm:px-6 flex justify-center items-center"
     >
       {/* Subtle grid (OS UI feel) */}
       <div

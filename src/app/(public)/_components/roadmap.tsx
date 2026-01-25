@@ -60,14 +60,14 @@ export function Roadmap() {
           {MILESTONES.map((m, i) => (
             <motion.div
               key={m.title}
-              className="relative flex gap-6 pb-10 last:pb-0"
+              className="relative flex gap-4 sm:gap-6 pb-10 last:pb-0"
               initial={{ opacity: 0, x: -8 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.4, delay: 0.08 * i }}
             >
               {i < MILESTONES.length - 1 && (
                 <div
-                  className="absolute left-[11px] top-8 h-[calc(100%-0.5rem)] w-px bg-border"
+                  className="absolute left-3 top-8 h-[calc(100%-0.5rem)] w-px -translate-x-1/2 bg-border"
                   aria-hidden
                 />
               )}
