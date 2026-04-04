@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { DndContext, useDraggable, DragEndEvent } from "@dnd-kit/core";
-import { cn, generateUUID } from "@/lib/utils";
+import { generateUUID } from "@/lib/utils";
 import WindowBase from "@/components/webos/window/window-base";
 import { useAbout } from "@/hooks/webos/use-about";
 import { useBrowser } from "@/hooks/webos/use-browser";
@@ -72,7 +72,10 @@ function ImagePreviewInner({ id, x, y, url, onClose }: { id: string; x: number; 
 export default function WindowProvider() {
   const [isMounted, setIsMounted] = useState(false);
 
-  useEffect(() => { setIsMounted(true); }, []);
+  useEffect(() => {
+     
+    setIsMounted(true);
+  }, []);
   if (!isMounted) return null;
 
   return (
