@@ -64,7 +64,9 @@ export const searchFiles = query({
 export const getFileById = query({
   args: { fileId: v.id("files") },
   handler: async (ctx, { fileId }) => {
-    return await ctx.db.get(fileId);
+    const file = await ctx.db.get(fileId);
+    if (!file || file.userId !== USER_ID) return null;
+    return file;
   },
 });
 

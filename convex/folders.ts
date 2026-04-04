@@ -43,6 +43,7 @@ export const getFolderBreadcrumb = query({
     const crumbs: { _id: Id<"folders">; name: string }[] = [];
     let current = await ctx.db.get(folderId);
     while (current) {
+      if (current.userId !== USER_ID) break;
       crumbs.unshift({ _id: current._id, name: current.name });
       if (!current.parentId) break;
       current = await ctx.db.get(current.parentId);
