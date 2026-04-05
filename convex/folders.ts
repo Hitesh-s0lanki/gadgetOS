@@ -98,6 +98,9 @@ export const renameFolder = mutation({
 export const softDeleteFolder = mutation({
   args: { folderId: v.id("folders") },
   handler: async (ctx, { folderId }) => {
+    const root = await ctx.db.get(folderId);
+    if (!root || root.userId !== USER_ID) return;
+
     const now = Date.now();
 
     // BFS: collect this folder + all descendants
