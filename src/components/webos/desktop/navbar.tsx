@@ -44,7 +44,10 @@ export default function Navbar() {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
 
-  const { wifiEnabled, airplaneModeEnabled, isMuted, isListening } = useOsState();
+  const wifiEnabled         = useOsState((s) => s.wifiEnabled);
+  const airplaneModeEnabled = useOsState((s) => s.airplaneModeEnabled);
+  const isMuted             = useOsState((s) => s.isMuted);
+  const isListening         = useOsState((s) => s.isListening);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect

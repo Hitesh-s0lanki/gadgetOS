@@ -38,16 +38,17 @@ function SleepOverlay() {
 
   if (!isSleeping) return null;
 
-  const timePart = now?.toLocaleTimeString("en-US", {
+  const display = now ?? new Date();
+  const timePart = display.toLocaleTimeString("en-US", {
     hour: "numeric",
     minute: "2-digit",
     hour12: true,
-  }) ?? "";
-  const datePart = now?.toLocaleDateString("en-US", {
+  });
+  const datePart = display.toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
-  }) ?? "";
+  });
 
   return (
     <div
