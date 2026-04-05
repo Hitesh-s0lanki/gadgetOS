@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { useChat as useAIChat } from "ai/react";
+import { useEffect, useRef, useState } from "react";
+import { useChat } from "@ai-sdk/react";
+import { TextStreamChatTransport, UIMessage } from "ai";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Send } from "lucide-react";
@@ -10,13 +11,19 @@ export default function ChatApp() {
   const storedMessages = useQuery(api.chat.getMessages);
   const addMessage = useMutation(api.chat.addMessage);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const [input, setInput] = useState("");
 
-  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useAIChat({
-    api: "/api/chat",
-    onFinish: async (message) => {
-      await addMessage({ role: "assistant", content: message.content });
+  const { messages, sendMessage, status, setMessages } = useChat({
+    transport: new TextStreamChatTransport({ api: "/api/chat" }),
+    onFinish: async ({ message }: { message: UIMessage }) => {
+      const textPart = message.parts.find((p) => p.type === "text");
+      if (textPart && textPart.type === "text") {
+        await addMessage({ role: "assistant", content: textPart.text });
+      }
     },
   });
+
+  const isLoading = status === "streaming" || status === "submitted";
 
   // Load persisted messages from Convex into useChat on first mount
   useEffect(() => {
@@ -24,8 +31,8 @@ export default function ChatApp() {
       setMessages(
         storedMessages.map((m) => ({
           id: m._id,
-          role: m.role,
-          content: m.content,
+          role: m.role as UIMessage["role"],
+          parts: [{ type: "text" as const, text: m.content }],
         }))
       );
     }
@@ -40,8 +47,10 @@ export default function ChatApp() {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
-    await addMessage({ role: "user", content: input });
-    handleSubmit(e);
+    const text = input.trim();
+    setInput("");
+    await addMessage({ role: "user", content: text });
+    sendMessage({ text });
   };
 
   return (
@@ -53,22 +62,28 @@ export default function ChatApp() {
             Ask me anything...
           </div>
         )}
-        {messages.map((m) => (
-          <div
-            key={m.id}
-            className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
-          >
+        {messages.map((m) => {
+          const textContent = m.parts
+            .filter((p) => p.type === "text")
+            .map((p) => (p.type === "text" ? p.text : ""))
+            .join("");
+          return (
             <div
-              className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm leading-relaxed whitespace-pre-wrap break-words ${
-                m.role === "user"
-                  ? "bg-indigo-500 text-white rounded-br-sm"
-                  : "bg-white/80 text-gray-800 border border-white/50 rounded-bl-sm shadow-sm"
-              }`}
+              key={m.id}
+              className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
             >
-              {m.content}
+              <div
+                className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm leading-relaxed whitespace-pre-wrap break-words ${
+                  m.role === "user"
+                    ? "bg-indigo-500 text-white rounded-br-sm"
+                    : "bg-white/80 text-gray-800 border border-white/50 rounded-bl-sm shadow-sm"
+                }`}
+              >
+                {textContent}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
         {isLoading && (
           <div className="flex justify-start">
             <div className="bg-white/80 border border-white/50 rounded-2xl rounded-bl-sm px-4 py-2 shadow-sm">
@@ -90,7 +105,7 @@ export default function ChatApp() {
       >
         <input
           value={input}
-          onChange={handleInputChange}
+          onChange={(e) => setInput(e.target.value)}
           disabled={isLoading}
           placeholder="Type a message..."
           className="flex-1 bg-white/70 border border-white/50 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 disabled:opacity-50"
