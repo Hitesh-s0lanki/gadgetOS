@@ -22,6 +22,8 @@ type File_ = {
   content?: string | null;
 };
 
+type FileResult = { _id: string; type?: string | null; contentUrl?: string | null; name?: string | null };
+
 const TEXT_TYPES = [
   "text/plain",
   "text/markdown",
@@ -36,7 +38,7 @@ const IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp", "image/gif"];
 export default function FileExplorerApp() {
   const [selected, setSelected] = useState("main");
   const [searchText, setSearchText] = useState("");
-  const [searchResults, setSearchResults] = useState<Record<string, unknown>[]>([]);
+  const [searchResults, setSearchResults] = useState<FileResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
   const { onOpen: openImagePreview } = useImagePreview();

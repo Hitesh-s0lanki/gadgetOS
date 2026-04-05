@@ -2,7 +2,7 @@ import { v } from "convex/values";
 import { action, internalQuery } from "./_generated/server";
 import { getEmbeddingsWithAI } from "./openai";
 import { internal } from "./_generated/api";
-import { Id } from "./_generated/dataModel";
+import { Doc, Id } from "./_generated/dataModel";
 
 const USER_ID = process.env.CONVEX_USER_ID as Id<"users">;
 
@@ -22,7 +22,7 @@ export const fetchSearchResults = internalQuery({
 
 export const searchFiles = action({
   args: { query: v.string() },
-  handler: async (ctx, { query }) => {
+  handler: async (ctx, { query }): Promise<Doc<"files">[]> => {
     if (!query || query.length < 3) return [];
     try {
       const embedding = await getEmbeddingsWithAI(query);
