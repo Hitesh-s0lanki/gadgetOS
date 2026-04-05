@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Monitor } from "lucide-react";
@@ -9,13 +9,14 @@ import { Button } from "@/components/ui/button";
 export default function DemoPage() {
   const router = useRouter();
 
-  useEffect(() => {
+  // useLayoutEffect fires synchronously before the browser paints, so
+  // desktop users are redirected before the mobile UI is ever visible.
+  useLayoutEffect(() => {
     if (window.innerWidth > 768) {
       router.replace("/webos/lock-screen");
     }
   }, [router]);
 
-  // On desktop the redirect fires immediately; this UI is only seen on mobile.
   return (
     <main className="min-h-screen bg-slate-950 flex items-center justify-center px-6">
       <div className="max-w-md text-center space-y-6">

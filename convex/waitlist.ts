@@ -4,6 +4,8 @@ import { mutation } from "./_generated/server";
 export const addToWaitlist = mutation({
   args: { email: v.string() },
   handler: async (ctx, { email }) => {
+    // Normalize email server-side to prevent case-variant duplicates
+    // (e.g. "User@Example.com" and "user@example.com" are the same address).
     const normalizedEmail = email.toLowerCase().trim();
 
     const existing = await ctx.db
