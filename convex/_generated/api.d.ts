@@ -15,6 +15,7 @@ import type * as folders from "../folders.js";
 import type * as openai from "../openai.js";
 import type * as search from "../search.js";
 import type * as users from "../users.js";
+import type * as waitlist from "../waitlist.js";
 
 import type {
   ApiFromModules,
@@ -30,6 +31,7 @@ declare const fullApi: ApiFromModules<{
   openai: typeof openai;
   search: typeof search;
   users: typeof users;
+  waitlist: typeof waitlist;
 }>;
 
 /**

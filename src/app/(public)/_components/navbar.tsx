@@ -47,7 +47,13 @@ export function Navbar() {
           href="#hero"
           className="flex items-center gap-2 group transition-opacity hover:opacity-90"
         >
-          <Image src="/logo.svg" alt="Logo" height={32} width={32} className="h-8 w-8" />
+          <Image
+            src="/logo.svg"
+            alt="Logo"
+            height={32}
+            width={32}
+            className="h-8 w-8"
+          />
           <span className="text-lg font-bold tracking-tight text-slate-900">
             GadgetOS
           </span>
@@ -68,15 +74,19 @@ export function Navbar() {
 
         {/* Desktop Actions */}
         <div className="hidden items-center gap-4 md:flex">
-          <Link 
-            href="/login" 
+          <Link
+            href="/login"
             className="text-sm font-medium text-slate-600 hover:text-slate-900"
           >
             Sign In
           </Link>
-          <Button size="sm" className="rounded-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-200" asChild>
+          <Button
+            size="sm"
+            className="rounded-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-200"
+            asChild
+          >
             <Link href="#early-access">
-               Join Waitlist <Sparkles className="ml-2 h-3 w-3 opacity-70" />
+              Join Waitlist <Sparkles className="ml-2 h-3 w-3 opacity-70" />
             </Link>
           </Button>
         </div>
@@ -89,11 +99,20 @@ export function Navbar() {
               <span className="sr-only">Open menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-[300px] sm:w-[300px] border-l border-slate-200">
+          <SheetContent
+            side="right"
+            className="w-[300px] sm:w-[300px] border-l border-slate-200"
+          >
             <SheetHeader className="text-left">
               <SheetTitle className="flex items-center gap-2">
-                 <Image src="/logo.svg" alt="Logo" height={32} width={32} className="h-8 w-8" />
-                 GadgetOS
+                <Image
+                  src="/logo.svg"
+                  alt="Logo"
+                  height={32}
+                  width={32}
+                  className="h-8 w-8"
+                />
+                GadgetOS
               </SheetTitle>
             </SheetHeader>
             <nav className="mt-8 flex flex-col gap-2">
@@ -108,12 +127,11 @@ export function Navbar() {
                 </Link>
               ))}
               <div className="mt-6 flex flex-col gap-3 border-t border-slate-100 pt-6">
-                <Button variant="outline" size="lg" className="w-full justify-start rounded-xl border-slate-200" asChild>
-                  <Link href="/login" onClick={() => setOpen(false)}>
-                    Sign In
-                  </Link>
-                </Button>
-                <Button size="lg" className="w-full justify-start rounded-xl bg-indigo-600 hover:bg-indigo-700" asChild>
+                <Button
+                  size="lg"
+                  className="w-full justify-start rounded-xl bg-indigo-600 hover:bg-indigo-700"
+                  asChild
+                >
                   <Link href="#early-access" onClick={() => setOpen(false)}>
                     Join Waitlist
                   </Link>
