@@ -36,7 +36,7 @@ export default function Navbar() {
       {/* Right: system status */}
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="ghost" className="h-6 hover:bg-white/20 rounded-sm text-sm flex gap-4">
+          <Button variant="ghost" className="h-6 hover:bg-white/30 rounded-md text-sm flex gap-4 transition-colors duration-150">
             <Image src="/icons/wifi.svg" alt="WiFi" width={15} height={15} />
             <Image src="/icons/sound.svg" alt="Sound" width={15} height={15} />
             <Image src="/icons/battery.svg" alt="Battery" width={15} height={15} />
