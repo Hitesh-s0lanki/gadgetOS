@@ -5,15 +5,35 @@ import { motion, useInView } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sparkles } from "lucide-react";
+import { useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { toast } from "sonner";
+import { ConvexError } from "convex/values";
 
 export default function WaitingList() {
   const [email, setEmail] = useState("");
+  const [isPending, setIsPending] = useState(false);
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.2 });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const addToWaitlist = useMutation(api.waitlist.addToWaitlist);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: connect backend
+    setIsPending(true);
+    try {
+      await addToWaitlist({ email });
+      toast.success("You're on the list! We'll be in touch.");
+      setEmail("");
+    } catch (err) {
+      if (err instanceof ConvexError && err.data === "already_on_list") {
+        toast.info("You're already on the list!");
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (
@@ -67,20 +87,23 @@ export default function WaitingList() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={isPending}
                 className="h-12 w-full rounded-xl border-slate-200 bg-slate-50/50 px-4 text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 transition-all font-medium"
                 />
             </div>
 
             <Button
               size="lg"
+              disabled={isPending}
               className="
                 h-12 w-full rounded-xl
                 bg-indigo-600 text-white font-semibold
                 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-600/20
                 transition-all duration-300
+                disabled:opacity-60 disabled:cursor-not-allowed
               "
             >
-              Join the waiting list
+              {isPending ? "Joining..." : "Join the waiting list"}
             </Button>
           </form>
 

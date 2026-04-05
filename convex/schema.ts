@@ -60,4 +60,9 @@ export default defineSchema({
       dimensions: 1536,
       filterFields: ["userId"],
     }),
+
+  waitlist: defineTable({
+    email: v.string(),
+    joinedAt: v.number(),
+  }).index("by_email", ["email"]),
 });
