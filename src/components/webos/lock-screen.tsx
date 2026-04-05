@@ -25,11 +25,11 @@ export default function LockScreen() {
     <div className="h-screen w-full bg-[url('/background.svg')] bg-no-repeat bg-center bg-cover">
       <Link
         href="/webos"
-        className="bg-black/70 h-screen w-full flex flex-col items-center justify-center text-white gap-2"
+        className="bg-black/40 backdrop-blur-2xl h-screen w-full flex flex-col items-center justify-center text-white gap-2"
       >
-        <h1 className="text-7xl font-semibold">{formattedTime.split(" ")[0]}</h1>
-        <h2 className="text-xl">{formattedDate}</h2>
-        <p className="text-sm opacity-60 mt-4">Click anywhere to unlock</p>
+        <h1 className="text-8xl font-thin tracking-tight">{formattedTime.split(" ")[0]}</h1>
+        <h2 className="text-lg font-medium opacity-80">{formattedDate}</h2>
+        <p className="text-xs opacity-50 mt-6 tracking-widest uppercase animate-pulse">Click anywhere to unlock</p>
       </Link>
     </div>
   );

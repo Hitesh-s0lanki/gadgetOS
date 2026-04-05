@@ -21,9 +21,9 @@ export default function DateTimeDisplay() {
   const formattedDate = currentTime.toLocaleDateString("en-GB").replaceAll("/", ".");
 
   return (
-    <div className="bg-white/40 h-16 rounded-2xl px-4 flex items-center space-x-3 text-black">
-      <span className="text-lg font-semibold">{formattedTime}</span>
-      <span className="text-lg">{formattedDate}</span>
+    <div className="bg-white/35 backdrop-blur-[16px] border border-white/60 rounded-xl px-4 py-2 shadow-[0_4px_24px_rgba(0,0,0,0.12)] flex items-center space-x-3">
+      <span className="text-sm font-semibold text-black/75">{formattedTime}</span>
+      <span className="text-sm text-black/50">{formattedDate}</span>
     </div>
   );
 }
