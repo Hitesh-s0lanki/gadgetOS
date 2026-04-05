@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     const timeout = setTimeout(() => controller.abort(), 30_000);
 
     try {
-      const result = await openaiTerminal(command);
+      const result = await openaiTerminal(command, controller.signal);
       clearTimeout(timeout);
       return NextResponse.json(result);
     } catch (err: unknown) {

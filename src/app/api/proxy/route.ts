@@ -1,10 +1,40 @@
 import { NextResponse } from "next/server";
+import { isIP } from "net";
+import { lookup } from "dns/promises";
 
 const BLOCKED_HEADERS = new Set([
   "x-frame-options",
   "content-security-policy",
   "content-security-policy-report-only",
 ]);
+
+// Blocks private/loopback ranges to prevent SSRF
+function isPrivateIp(ip: string): boolean {
+  const private4 = [
+    /^127\./,
+    /^10\./,
+    /^192\.168\./,
+    /^172\.(1[6-9]|2\d|3[01])\./,
+    /^169\.254\./,
+    /^0\./,
+  ];
+  const private6 = [/^::1$/, /^fc/, /^fd/, /^fe80/];
+  const v = isIP(ip);
+  if (v === 4) return private4.some((r) => r.test(ip));
+  if (v === 6) return private6.some((r) => r.test(ip));
+  return false;
+}
+
+async function resolvesSafeHost(hostname: string): Promise<boolean> {
+  // Reject bare IPs that are private
+  if (isIP(hostname) !== 0) return !isPrivateIp(hostname);
+  try {
+    const { address } = await lookup(hostname);
+    return !isPrivateIp(address);
+  } catch {
+    return false;
+  }
+}
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -24,6 +54,12 @@ export async function GET(request: Request) {
   // Only allow http/https
   if (targetUrl.protocol !== "http:" && targetUrl.protocol !== "https:") {
     return NextResponse.json({ error: "Unsupported protocol" }, { status: 400 });
+  }
+
+  // SSRF guard: reject requests that resolve to private/loopback addresses
+  const safe = await resolvesSafeHost(targetUrl.hostname);
+  if (!safe) {
+    return NextResponse.json({ error: "Forbidden target" }, { status: 403 });
   }
 
   try {
@@ -50,8 +86,16 @@ export async function GET(request: Request) {
 
     let html = await upstream.text();
 
-    // Inject <base> so relative URLs resolve against the original origin
-    const base = `${targetUrl.protocol}//${targetUrl.host}`;
+    // Use the final URL after redirects for the base href so that path-relative
+    // URLs (e.g. ./app.js on /docs/page.html) resolve correctly
+    const finalUrl = upstream.url ?? target;
+    const parsedFinal = new URL(finalUrl);
+    // Base must include the directory path, not just the origin
+    const basePath = parsedFinal.pathname.endsWith("/")
+      ? parsedFinal.pathname
+      : parsedFinal.pathname.replace(/\/[^/]*$/, "/");
+    const base = `${parsedFinal.protocol}//${parsedFinal.host}${basePath}`;
+
     if (/<head/i.test(html)) {
       html = html.replace(/<head([^>]*)>/i, `<head$1><base href="${base}">`);
     } else {

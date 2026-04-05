@@ -15,7 +15,10 @@ interface InstallResponse { steps: Step[] }
 interface GeneralResponse { answer: string }
 export type TerminalResponse = InstallResponse | GeneralResponse;
 
-export async function openaiTerminal(userRequest: string): Promise<TerminalResponse> {
+export async function openaiTerminal(
+  userRequest: string,
+  signal?: AbortSignal
+): Promise<TerminalResponse> {
   const response = await openai.chat.completions.create({
     model: "gpt-4.1",
     messages: [
@@ -29,7 +32,7 @@ export async function openaiTerminal(userRequest: string): Promise<TerminalRespo
       },
       { role: "user", content: userRequest },
     ],
-  });
+  }, { signal });
 
   const text = response.choices[0].message.content?.trim() ?? "";
   try {
