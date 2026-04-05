@@ -18,32 +18,34 @@ export function useBatteryInfo() {
   useEffect(() => {
     if (!("getBattery" in navigator)) return;
 
+    let cancelled = false;
     let battery: BatteryManager | null = null;
 
-    const update = (b: BatteryManager) => {
-      setBatteryInfo(b.level, b.charging, b.chargingTime, b.dischargingTime);
-    };
+    const onLevel           = () => { if (battery) setBatteryInfo(battery.level, battery.charging, battery.chargingTime, battery.dischargingTime); };
+    const onCharging        = () => { if (battery) setBatteryInfo(battery.level, battery.charging, battery.chargingTime, battery.dischargingTime); };
+    const onChargingTime    = () => { if (battery) setBatteryInfo(battery.level, battery.charging, battery.chargingTime, battery.dischargingTime); };
+    const onDischargingTime = () => { if (battery) setBatteryInfo(battery.level, battery.charging, battery.chargingTime, battery.dischargingTime); };
 
     (navigator as unknown as { getBattery: () => Promise<BatteryManager> })
       .getBattery()
       .then((b) => {
+        if (cancelled) return;
         battery = b;
-        update(b);
-        b.addEventListener("levelchange", () => update(b));
-        b.addEventListener("chargingchange", () => update(b));
-        b.addEventListener("chargingtimechange", () => update(b));
-        b.addEventListener("dischargingtimechange", () => update(b));
+        setBatteryInfo(b.level, b.charging, b.chargingTime, b.dischargingTime);
+        b.addEventListener("levelchange",          onLevel);
+        b.addEventListener("chargingchange",       onCharging);
+        b.addEventListener("chargingtimechange",   onChargingTime);
+        b.addEventListener("dischargingtimechange", onDischargingTime);
       })
-      .catch(() => {
-        // API not available — defaults remain in store
-      });
+      .catch(() => {});
 
     return () => {
+      cancelled = true;
       if (!battery) return;
-      battery.removeEventListener("levelchange", () => {});
-      battery.removeEventListener("chargingchange", () => {});
-      battery.removeEventListener("chargingtimechange", () => {});
-      battery.removeEventListener("dischargingtimechange", () => {});
+      battery.removeEventListener("levelchange",           onLevel);
+      battery.removeEventListener("chargingchange",        onCharging);
+      battery.removeEventListener("chargingtimechange",    onChargingTime);
+      battery.removeEventListener("dischargingtimechange", onDischargingTime);
     };
   }, [setBatteryInfo]);
 }
