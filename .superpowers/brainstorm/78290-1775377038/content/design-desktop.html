@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GadgetOS Design — Desktop & Window Chrome</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 24px; gap: 32px; }
+
+  h2 { color: white; font-size: 18px; font-weight: 600; text-align: center; }
+  .subtitle { color: rgba(255,255,255,0.5); font-size: 13px; text-align: center; margin-top: 4px; }
+  .section-label { color: rgba(255,255,255,0.4); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; align-self: flex-start; margin-bottom: 8px; }
+
+  /* ── DESKTOP MOCKUP ─────────────────────────────── */
+  .desktop {
+    width: 720px;
+    height: 420px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='420'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23667eea'/%3E%3Cstop offset='50%25' stop-color='%2393a5cf'/%3E%3Cstop offset='100%25' stop-color='%23f5f7fa'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='720' height='420' fill='url(%23bg)'/%3E%3C/svg%3E");
+    background-size: cover;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  /* ── NAVBAR ─────────────────────────────────────── */
+  .navbar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 28px;
+    background: rgba(255,255,255,0.35);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid rgba(255,255,255,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+  }
+  .navbar-brand {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(0,0,0,0.7);
+    padding: 2px 8px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .navbar-brand:hover { background: rgba(255,255,255,0.3); }
+  .navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 11px;
+    color: rgba(0,0,0,0.65);
+    font-weight: 500;
+  }
+  .navbar-icons { display: flex; gap: 8px; align-items: center; }
+  .navbar-icon { width: 14px; height: 14px; background: rgba(0,0,0,0.35); border-radius: 2px; }
+  .navbar-time { font-size: 11px; font-weight: 600; color: rgba(0,0,0,0.7); }
+
+  /* ── WINDOW ─────────────────────────────────────── */
+  .window {
+    position: absolute;
+    top: 50px;
+    left: 40px;
+    width: 380px;
+    height: 240px;
+    background: rgba(255,255,255,0.65);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.75);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.18), 0 1px 0 rgba(255,255,255,0.8) inset;
+    overflow: hidden;
+  }
+  .window-title-bar {
+    height: 36px;
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.6);
+    display: grid;
+    grid-template-columns: 80px 1fr 80px;
+    align-items: center;
+    padding: 0 12px;
+  }
+  .window-controls { display: flex; gap: 6px; align-items: center; }
+  .wc { width: 11px; height: 11px; border-radius: 50%; }
+  .wc-close { background: #ff5f57; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.15); }
+  .wc-min   { background: #ffbd2e; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.15); }
+  .wc-max   { background: #28c840; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.15); }
+  .window-title { text-align: center; font-size: 12px; font-weight: 600; color: rgba(0,0,0,0.65); cursor: move; user-select: none; }
+  .window-body { padding: 16px; font-size: 11px; color: rgba(0,0,0,0.5); line-height: 1.6; }
+
+  /* Terminal window */
+  .window-terminal {
+    position: absolute;
+    top: 80px;
+    right: 40px;
+    width: 300px;
+    height: 190px;
+  }
+  .terminal-body {
+    background: #0d1117;
+    padding: 12px;
+    height: calc(100% - 36px);
+    overflow: hidden;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 10.5px;
+    line-height: 1.7;
+  }
+  .term-prompt { color: #6366f1; }
+  .term-cmd    { color: #e6edf3; }
+  .term-out    { color: #3fb950; padding-left: 14px; }
+  .term-dim    { color: #8b949e; padding-left: 14px; }
+
+  /* ── DOCK ────────────────────────────────────────── */
+  .dock-wrapper {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+  }
+  .dock {
+    background: rgba(255,255,255,0.35);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 16px;
+    padding: 6px 10px;
+    display: flex;
+    gap: 6px;
+    align-items: flex-end;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.15), 0 1px 0 rgba(255,255,255,0.8) inset;
+  }
+  .dock-item {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .dock-item:hover { transform: scale(1.2) translateY(-4px); }
+  .dock-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #6366f1;
+  }
+  .dock-sep { width: 1px; background: rgba(0,0,0,0.15); height: 28px; align-self: center; margin: 0 2px; }
+  .datetime-pill {
+    background: rgba(255,255,255,0.35);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 12px;
+    padding: 6px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(0,0,0,0.7);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    white-space: nowrap;
+  }
+
+  /* ── SECTION LABELS ─────────────────────────────── */
+  .callout {
+    position: absolute;
+    background: rgba(99,102,241,0.9);
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 2px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .callout::after {
+    content: '';
+    position: absolute;
+  }
+
+  /* ── LEGEND ─────────────────────────────────────── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 8px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255,255,255,0.75);
+    font-size: 12px;
+  }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    background: #6366f1;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+
+<h2>GadgetOS — Enhanced Desktop Design</h2>
+<p class="subtitle">macOS-inspired light · Indigo accent · Frosted glass throughout</p>
+
+<div class="desktop">
+
+  <!-- NAVBAR -->
+  <div class="navbar">
+    <span class="navbar-brand">GadgetOS</span>
+    <div class="navbar-right">
+      <div class="navbar-icons">
+        <div class="navbar-icon"></div>
+        <div class="navbar-icon"></div>
+        <div class="navbar-icon"></div>
+      </div>
+      <span class="navbar-time">9:41 AM</span>
+    </div>
+  </div>
+  <div class="callout" style="top:8px;left:115px;">① Frosted glass navbar · blur(24px) · white/35</div>
+
+  <!-- SETTINGS WINDOW -->
+  <div class="window">
+    <div class="window-title-bar">
+      <div class="window-controls">
+        <div class="wc wc-close"></div>
+        <div class="wc wc-min"></div>
+        <div class="wc wc-max"></div>
+      </div>
+      <div class="window-title">Settings</div>
+    </div>
+    <div class="window-body">
+      <div style="display:flex;gap:12px;height:100%;">
+        <div style="width:90px;border-right:1px solid rgba(0,0,0,0.07);padding-right:10px;display:flex;flex-direction:column;gap:4px;">
+          <div style="padding:5px 8px;background:rgba(99,102,241,0.12);border-radius:6px;font-weight:600;color:#4338ca;font-size:10px;">Appearance</div>
+          <div style="padding:5px 8px;font-size:10px;color:rgba(0,0,0,0.45);">Workspace</div>
+          <div style="padding:5px 8px;font-size:10px;color:rgba(0,0,0,0.45);">Windows</div>
+          <div style="padding:5px 8px;font-size:10px;color:rgba(0,0,0,0.45);">Shortcuts</div>
+          <div style="padding:5px 8px;font-size:10px;color:rgba(0,0,0,0.45);">Startup</div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;">
+          <div style="width:36px;height:36px;background:rgba(99,102,241,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;">⚙️</div>
+          <div style="font-weight:700;font-size:13px;color:rgba(0,0,0,0.75);">GadgetOS</div>
+          <div style="font-size:10px;color:rgba(0,0,0,0.4);">System Settings</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="callout" style="top:47px;left:42px;">② Glass window · white/65 · blur(28px) · shadow-2xl</div>
+  <div class="callout" style="top:53px;left:42px;top:84px;">③ Title bar · white/55 · traffic lights · drag handle</div>
+  <div class="callout" style="top:178px;left:55px;">④ Indigo selected state · bg-indigo-50/text-indigo-700</div>
+
+  <!-- TERMINAL WINDOW -->
+  <div class="window window-terminal">
+    <div class="window-title-bar">
+      <div class="window-controls">
+        <div class="wc wc-close"></div>
+        <div class="wc wc-min"></div>
+        <div class="wc wc-max"></div>
+      </div>
+      <div class="window-title">Terminal</div>
+    </div>
+    <div class="terminal-body">
+      <div><span class="term-prompt">admin@gadgetOS:~$</span> <span class="term-cmd">ls</span></div>
+      <div class="term-out">Documents  Downloads  Images</div>
+      <div><span class="term-prompt">admin@gadgetOS:~$</span> <span class="term-cmd">cd Documents</span></div>
+      <div class="term-dim">Changed directory to Documents</div>
+      <div><span class="term-prompt">admin@gadgetOS:Documents$</span> <span class="term-cmd">_</span></div>
+    </div>
+  </div>
+  <div class="callout" style="top:80px;right:42px;">⑤ Terminal · bg-[#0d1117] · indigo prompt · green output</div>
+
+  <!-- DOCK -->
+  <div class="dock-wrapper">
+    <div class="dock">
+      <div class="dock-item" style="background:linear-gradient(135deg,#667eea,#764ba2);">ℹ️</div>
+      <div class="dock-item active" style="background:linear-gradient(135deg,#4facfe,#00f2fe);">🌐</div>
+      <div class="dock-item" style="background:linear-gradient(135deg,#0d1117,#1f2937);">💻</div>
+      <div class="dock-item" style="background:linear-gradient(135deg,#f093fb,#f5576c);">📁</div>
+      <div class="dock-sep"></div>
+      <div class="dock-item" style="background:linear-gradient(135deg,#4481eb,#04befe);">⚙️</div>
+      <div class="dock-item" style="background:linear-gradient(135deg,#f7971e,#ffd200);">🕐</div>
+      <div class="dock-item" style="background:linear-gradient(135deg,#43e97b,#38f9d7);">📝</div>
+      <div class="dock-item" style="background:linear-gradient(135deg,#fa709a,#fee140);">🗑️</div>
+    </div>
+    <div class="datetime-pill">9:41 AM · Sat 5 Apr</div>
+  </div>
+  <div class="callout" style="bottom:58px;left:50%;transform:translateX(-50%);">⑥ Dock glass pill · indigo open-indicator dot · datetime pill</div>
+
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot"></div> Navbar: white/35, blur(24px), border white/50</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#28c840;"></div> Window: white/65, blur(28px), inset highlight</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#0d1117;"></div> Terminal: #0d1117 bg, indigo prompt, green output</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#6366f1;"></div> Accent: indigo-500 — selected states, open dots, highlights</div>
+</div>
+
+<p style="color:rgba(255,255,255,0.4);font-size:12px;text-align:center;">Does this look right? Reply in terminal to confirm or request changes.</p>
+
+</body>
+</html>
