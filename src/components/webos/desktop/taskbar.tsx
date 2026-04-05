@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { FloatingDock } from "@/components/ui/floating-dock";
-import DateTimeDisplay from "./date-time";
 import { useTerminal } from "@/hooks/webos/use-terminal";
 import { useAbout } from "@/hooks/webos/use-about";
 import { useBrowser } from "@/hooks/webos/use-browser";
@@ -34,9 +33,8 @@ export default function Taskbar() {
   ];
 
   return (
-    <div className="flex items-center gap-4 justify-center w-full absolute bottom-8">
+    <div className="flex items-center justify-center w-full absolute bottom-8">
       <FloatingDock mobileClassName="translate-y-20" items={links} />
-      <DateTimeDisplay />
     </div>
   );
 }

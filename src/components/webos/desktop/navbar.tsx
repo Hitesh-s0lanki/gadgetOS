@@ -9,11 +9,21 @@ import Image from "next/image";
 
 export default function Navbar() {
   const [isMounted, setIsMounted] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
   }, []);
+  useEffect(() => {
+    const id = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
   if (!isMounted) return null;
+
+  const formattedTime = currentTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const formattedDate = currentTime.toLocaleDateString("en-GB").replaceAll("/", ".");
 
   return (
     <div className="h-8 bg-white/35 backdrop-blur-2xl border-b border-white/50 w-full px-2 py-1 flex justify-between items-center">
@@ -33,8 +43,11 @@ export default function Navbar() {
         </PopoverContent>
       </Popover>
 
-      {/* Right: system status */}
-      <Popover>
+      {/* Right: date-time + system status */}
+      <div className="flex items-center gap-3">
+        <span className="text-xs font-semibold text-black/70">{formattedTime}</span>
+        <span className="text-xs text-black/45">{formattedDate}</span>
+        <Popover>
         <PopoverTrigger asChild>
           <Button variant="ghost" className="h-6 hover:bg-white/30 rounded-md text-sm flex gap-4 transition-colors duration-150">
             <Image src="/icons/wifi.svg" alt="WiFi" width={15} height={15} />
@@ -67,7 +80,8 @@ export default function Navbar() {
             </div>
           </div>
         </PopoverContent>
-      </Popover>
+        </Popover>
+      </div>
     </div>
   );
 }
