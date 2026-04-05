@@ -8,7 +8,7 @@ import {
 
 export function DesktopContextMenu() {
   return (
-    <ContextMenuContent className="w-48">
+    <ContextMenuContent className="w-48 bg-white/70 backdrop-blur-2xl border border-white/60 shadow-xl rounded-xl">
       <ContextMenuItem inset>
         Copy <ContextMenuShortcut>Ctrl+C</ContextMenuShortcut>
       </ContextMenuItem>

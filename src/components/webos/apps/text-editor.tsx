@@ -71,14 +71,14 @@ export default function TextEditorApp() {
   };
 
   return (
-    <div className="bg-white w-full h-full flex flex-col relative">
-      <div className="flex items-center justify-between bg-white px-4 py-2 border-b">
+    <div className="bg-white/60 backdrop-blur-2xl w-full h-full flex flex-col relative">
+      <div className="flex items-center justify-between bg-white/80 backdrop-blur-sm px-4 py-2 border-b border-white/60">
         <div className="flex border-b border-gray-200">
           {notes.map(([id], idx) => (
             <div
               key={id}
               onClick={() => setActiveId(id)}
-              className={`py-2 px-3 cursor-pointer text-sm ${id === activeId ? "border-b-2 border-indigo-500 text-indigo-600" : "text-gray-600"}`}
+              className={`py-2 px-3 cursor-pointer text-sm transition-colors duration-150 ${id === activeId ? "border-b-2 border-indigo-500 text-indigo-600" : "text-black/40 hover:text-black/70"}`}
             >
               Note {idx + 1}
             </div>
@@ -102,9 +102,9 @@ export default function TextEditorApp() {
       />
 
       {showDialog && (
-        <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-          <div className="bg-white/65 rounded-lg shadow-lg w-96">
-            <div className="bg-white/50 border-b p-2 rounded-t-xl">
+        <div className="absolute inset-0 bg-black/25 backdrop-blur-sm flex items-center justify-center">
+          <div className="bg-white/80 backdrop-blur-2xl border border-white/60 rounded-2xl shadow-xl w-96">
+            <div className="bg-white/50 border-b border-white/60 p-2 rounded-t-2xl">
               <h3 className="text-sm text-center font-semibold">Save File</h3>
             </div>
             <div className="flex flex-col p-4 gap-4">
@@ -126,8 +126,8 @@ export default function TextEditorApp() {
               </Select>
             </div>
             <div className="flex space-x-2 justify-center pb-4">
-              <Button onClick={() => setShowDialog(false)} className="px-3 h-8 text-xs bg-black/60">Cancel</Button>
-              <Button onClick={() => void handleSave()} className="px-3 h-8 text-xs bg-black/60">Save</Button>
+              <Button onClick={() => setShowDialog(false)} className="px-3 h-8 text-xs bg-white/60 text-black/70 hover:bg-white/80 border border-white/60">Cancel</Button>
+              <Button onClick={() => void handleSave()} className="px-3 h-8 text-xs bg-indigo-600 hover:bg-indigo-700 text-white">Save</Button>
             </div>
           </div>
         </div>
