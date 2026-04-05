@@ -1,3 +1,5 @@
+"use client";
+
 import { Navbar } from "./_components/navbar";
 import Hero from "./_components/hero";
 import Product from "./_components/product";

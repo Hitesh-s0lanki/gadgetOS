@@ -1,0 +1,77 @@
+<h2>What visual direction should we take GadgetOS?</h2>
+<p class="subtitle">This sets the tone for all UI enhancements. Pick the aesthetic that feels right.</p>
+
+<div class="cards">
+  <div class="card" data-choice="macos" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: linear-gradient(135deg, #e8f0fe 0%, #d2e3fc 100%); padding: 16px; border-radius: 8px; min-height: 120px;">
+      <div style="background: rgba(255,255,255,0.6); backdrop-filter: blur(10px); border-radius: 12px; padding: 8px 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+        <div style="width:10px;height:10px;border-radius:50%;background:#ff5f57;"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:#ffbd2e;"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:#28c840;"></div>
+        <span style="font-size:11px;color:#444;margin-left:auto;">GadgetOS Window</span>
+      </div>
+      <div style="background: rgba(255,255,255,0.4); border-radius: 8px; padding: 12px; font-size:11px; color:#555;">
+        Clean, minimal content area<br/>with soft frosted glass panels
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — macOS-inspired Light</h3>
+      <p>Frosted glass, soft shadows, light palette, smooth animations. Clean and premium feel.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="dark" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: linear-gradient(135deg, #0d1117 0%, #161b22 100%); padding: 16px; border-radius: 8px; min-height: 120px;">
+      <div style="background: rgba(30,40,55,0.9); border-radius: 12px; padding: 8px 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.1);">
+        <div style="width:10px;height:10px;border-radius:50%;background:#ff5f57;"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:#ffbd2e;"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:#28c840;"></div>
+        <span style="font-size:11px;color:#8b9eb0;margin-left:auto;">GadgetOS Window</span>
+      </div>
+      <div style="background: #0d1117; border-radius: 8px; padding: 12px; font-size:11px; color:#58a6ff; border: 1px solid rgba(88,166,255,0.2);">
+        admin@gadgetOS:~$ <span style="color:#8b9eb0;">ls</span><br/>
+        <span style="color:#3fb950;">Documents  Downloads  Images</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Dark / Cyberpunk</h3>
+      <p>Deep dark backgrounds, neon accents, terminal-native look. Developer-focused aesthetic.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="win11" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); padding: 16px; border-radius: 8px; min-height: 120px;">
+      <div style="background: rgba(255,255,255,0.08); backdrop-filter: blur(20px); border-radius: 12px; padding: 8px 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.15);">
+        <div style="width:10px;height:10px;border-radius:50%;background:#ff5f57;"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:#ffbd2e;"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:#28c840;"></div>
+        <span style="font-size:11px;color:rgba(255,255,255,0.7);margin-left:auto;">GadgetOS Window</span>
+      </div>
+      <div style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 12px; font-size:11px; color:rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.1);">
+        Acrylic glass effect with<br/>vibrant color washes behind
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Windows 11 / Acrylic</h3>
+      <p>Semi-transparent dark acrylic panels, vibrant color backdrop bleeding through. Modern, bold.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="minimal" onclick="toggleSelect(this)">
+    <div class="card-image" style="background: #f5f5f5; padding: 16px; border-radius: 8px; min-height: 120px; border: 1px solid #e0e0e0;">
+      <div style="background: white; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <div style="width:10px;height:10px;border-radius:50%;background:#ff5f57;"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:#ffbd2e;"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:#28c840;"></div>
+        <span style="font-size:11px;color:#333;margin-left:auto;">GadgetOS Window</span>
+      </div>
+      <div style="background: white; border-radius: 6px; padding: 12px; font-size:11px; color:#333; box-shadow: 0 1px 2px rgba(0,0,0,0.06);">
+        Clean white panels, crisp<br/>typography, subtle shadows only
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>D — Minimal / Flat</h3>
+      <p>Pure white panels, no blur effects, typography-first. Fastest and cleanest but less dramatic.</p>
+    </div>
+  </div>
+</div>

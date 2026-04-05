@@ -1,0 +1,10 @@
+{"type":"server-started","port":55933,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:55933","screen_dir":"/Users/Hemant/Desktop/projects/gadgetos/.superpowers/brainstorm/78290-1775377038/content","state_dir":"/Users/Hemant/Desktop/projects/gadgetos/.superpowers/brainstorm/78290-1775377038/state"}
+{"type":"screen-added","file":"/Users/Hemant/Desktop/projects/gadgetos/.superpowers/brainstorm/78290-1775377038/content/design-direction.html"}
+{"type":"screen-added","file":"/Users/Hemant/Desktop/projects/gadgetos/.superpowers/brainstorm/78290-1775377038/content/focus-areas.html"}
+{"source":"user-event","type":"click","text":"★\n    \n      Everything — full UI overhaul\n      Windows, navbar, dock, lock screen, all apps, animations. Comprehensive pass.","choice":"everything","id":null,"timestamp":1775377192838}
+{"source":"user-event","type":"click","text":"★\n    \n      Everything — full UI overhaul\n      Windows, navbar, dock, lock screen, all apps, animations. Comprehensive pass.","choice":"everything","id":null,"timestamp":1775377206865}
+{"source":"user-event","type":"click","text":"★\n    \n      Everything — full UI overhaul\n      Windows, navbar, dock, lock screen, all apps, animations. Comprehensive pass.","choice":"everything","id":null,"timestamp":1775377208231}
+{"type":"screen-added","file":"/Users/Hemant/Desktop/projects/gadgetos/.superpowers/brainstorm/78290-1775377038/content/accent-color.html"}
+{"type":"screen-added","file":"/Users/Hemant/Desktop/projects/gadgetos/.superpowers/brainstorm/78290-1775377038/content/waiting-1.html"}
+{"type":"screen-added","file":"/Users/Hemant/Desktop/projects/gadgetos/.superpowers/brainstorm/78290-1775377038/content/design-desktop.html"}
+{"type":"server-stopped","reason":"idle timeout"}
