@@ -100,23 +100,27 @@ export default function TerminalApp() {
   };
 
   return (
-    <div ref={containerRef} className="bg-white text-gray-900 font-mono text-sm p-4 rounded-b-xl h-full overflow-auto">
+    <div
+      ref={containerRef}
+      className="bg-[#0d1117] text-[#e6edf3] font-mono text-sm p-4 rounded-b-xl h-full overflow-auto"
+      style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(255,255,255,0.2) transparent" }}
+    >
       {history.map((entry, i) => (
         <div key={i} className="mb-2">
-          <div><span className="text-blue-600">{prompt}</span> {entry.command}</div>
+          <div><span className="text-indigo-400">{prompt}</span> <span className="text-[#e6edf3]">{entry.command}</span></div>
           {entry.output.map((line, j) => (
-            <div key={j} className="pl-4 text-gray-700 whitespace-pre-wrap">{line}</div>
+            <div key={j} className="pl-4 text-[#3fb950] whitespace-pre-wrap">{line}</div>
           ))}
         </div>
       ))}
       <div className="flex">
-        <span className="text-blue-600">{prompt}</span>
+        <span className="text-indigo-400">{prompt}</span>
         <input
           ref={inputRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="bg-transparent flex-1 ml-1 focus:outline-none"
+          className="bg-transparent flex-1 ml-1 focus:outline-none text-[#e6edf3] caret-indigo-400"
         />
       </div>
     </div>
