@@ -18,13 +18,26 @@ import {
 import { useTextEditor } from "@/hooks/webos/use-text-editor";
 import { toast } from "sonner";
 
+type Note = { id: string; name: string; content: string };
+
 export default function TextEditorApp() {
-  const { onClose } = useTextEditor();
-  const [notes, setNotes] = useState<[string, string][]>([[generateUUID(), ""]]);
-  const [activeId, setActiveId] = useState(notes[0][0]);
+  const { onClose, pendingFile, clearPendingFile } = useTextEditor();
+
+  const [notes, setNotes] = useState<Note[]>(() => {
+    if (pendingFile) {
+      return [{ id: generateUUID(), name: pendingFile.name, content: pendingFile.content }];
+    }
+    return [{ id: generateUUID(), name: "Note 1", content: "" }];
+  });
+  const [activeId, setActiveId] = useState(notes[0].id);
   const [showDialog, setShowDialog] = useState(false);
   const [dialogName, setDialogName] = useState("");
   const [dialogFolderId, setDialogFolderId] = useState<string | undefined>();
+
+  // Clear pending file after we've consumed it on first render
+  useEffect(() => {
+    if (pendingFile) clearPendingFile();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const folders = useQuery(api.folders.getFolders);
   const createFile = useMutation(api.files.createTextFile);
@@ -35,15 +48,16 @@ export default function TextEditorApp() {
     Promise.resolve().then(() => setDialogFolderId(desktop?._id ?? folders[0]._id));
   }, [folders]);
 
-  const activeNote = notes.find(([id]) => id === activeId)!;
+  const activeNote = notes.find((n) => n.id === activeId)!;
 
   const updateContent = (content: string) => {
-    setNotes((prev) => prev.map(([id, t]) => (id === activeId ? [id, content] : [id, t])));
+    setNotes((prev) => prev.map((n) => (n.id === activeId ? { ...n, content } : n)));
   };
 
   const handleNew = () => {
     const id = generateUUID();
-    setNotes((prev) => [...prev, [id, ""]]);
+    const name = `Note ${notes.length + 1}`;
+    setNotes((prev) => [...prev, { id, name, content: "" }]);
     setActiveId(id);
   };
 
@@ -51,7 +65,7 @@ export default function TextEditorApp() {
     if (!dialogName.trim() || !dialogFolderId) return;
     let name = dialogName.trim();
     if (!/\.[^/.]+$/.test(name)) name += ".txt";
-    const content = activeNote[1];
+    const content = activeNote.content;
     try {
       await createFile({
         folderId: dialogFolderId as Id<"folders">,
@@ -74,13 +88,13 @@ export default function TextEditorApp() {
     <div className="bg-white/60 backdrop-blur-2xl w-full h-full flex flex-col relative">
       <div className="flex items-center justify-between bg-white/80 backdrop-blur-sm px-4 py-2 border-b border-white/60">
         <div className="flex border-b border-gray-200">
-          {notes.map(([id], idx) => (
+          {notes.map((note) => (
             <div
-              key={id}
-              onClick={() => setActiveId(id)}
-              className={`py-2 px-3 cursor-pointer text-sm transition-colors duration-150 ${id === activeId ? "border-b-2 border-indigo-500 text-indigo-600" : "text-black/40 hover:text-black/70"}`}
+              key={note.id}
+              onClick={() => setActiveId(note.id)}
+              className={`py-2 px-3 cursor-pointer text-sm transition-colors duration-150 ${note.id === activeId ? "border-b-2 border-indigo-500 text-indigo-600" : "text-black/40 hover:text-black/70"}`}
             >
-              Note {idx + 1}
+              {note.name}
             </div>
           ))}
         </div>
@@ -95,7 +109,7 @@ export default function TextEditorApp() {
       </div>
 
       <textarea
-        value={activeNote[1]}
+        value={activeNote.content}
         onChange={(e) => updateContent(e.target.value)}
         className="flex-1 p-4 resize-none focus:outline-none font-mono text-sm"
         placeholder="Start typing…"
