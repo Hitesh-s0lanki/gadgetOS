@@ -40,11 +40,7 @@ export function useVoiceControl() {
     isListening,
     setIsListening,
     setIsSleeping,
-    setVolume,
-    setBrightness,
     toggleMute,
-    volume,
-    brightness,
   } = useOsState();
 
   const handleTranscript = useCallback(
@@ -87,9 +83,9 @@ export function useVoiceControl() {
         toast.success("Opening Trash");
         return;
       }
-      if (t.includes("lock") || t.includes("sleep")) {
+      if (/\block\b/.test(t) || /\bsleep\b/.test(t)) {
         setIsSleeping(true);
-        toast.success("Sleeping");
+        toast.success(t.includes("sleep") ? "Sleeping" : "Locking screen");
         return;
       }
       if (t.includes("shutdown")) {
@@ -101,7 +97,9 @@ export function useVoiceControl() {
         return;
       }
       if (t.includes("unmute")) {
-        useOsState.getState().setVolume(useOsState.getState().previousVolume || 70);
+        if (useOsState.getState().isMuted) {
+          useOsState.getState().toggleMute();
+        }
         toast.success("Unmuted");
         return;
       }
@@ -111,12 +109,14 @@ export function useVoiceControl() {
         return;
       }
       if (t.includes("volume up")) {
-        setVolume(Math.min(100, volume + 10));
+        const { volume: v, setVolume: sv } = useOsState.getState();
+        sv(Math.min(100, v + 10));
         toast.success("Volume up");
         return;
       }
       if (t.includes("volume down")) {
-        setVolume(Math.max(0, volume - 10));
+        const { volume: v, setVolume: sv } = useOsState.getState();
+        sv(Math.max(0, v - 10));
         toast.success("Volume down");
         return;
       }
@@ -130,12 +130,14 @@ export function useVoiceControl() {
         return;
       }
       if (t.includes("brightness up")) {
-        setBrightness(Math.min(100, brightness + 10));
+        const { brightness: b, setBrightness: sb } = useOsState.getState();
+        sb(Math.min(100, b + 10));
         toast.success("Brightness up");
         return;
       }
       if (t.includes("brightness down")) {
-        setBrightness(Math.max(10, brightness - 10));
+        const { brightness: b, setBrightness: sb } = useOsState.getState();
+        sb(Math.max(10, b - 10));
         toast.success("Brightness down");
         return;
       }
@@ -157,7 +159,7 @@ export function useVoiceControl() {
         toast.error("Voice AI fallback failed");
       }
     },
-    [router, setIsSleeping, setVolume, setBrightness, toggleMute, volume, brightness]
+    [router, setIsSleeping, toggleMute]
   );
 
   useEffect(() => {
@@ -183,10 +185,15 @@ export function useVoiceControl() {
     };
 
     recognition.onerror = (e: SpeechRecognitionErrorEvent) => {
-      if (e.error === "not-allowed") {
-        toast.error("Microphone access denied. Enable it in browser settings.");
+      if (e.error === "not-allowed" || e.error === "audio-capture") {
+        toast.error(
+          e.error === "not-allowed"
+            ? "Microphone access denied. Enable it in browser settings."
+            : "No microphone found."
+        );
         setIsListening(false);
       }
+      // "no-speech" is a normal timeout — onend will restart recognition
     };
 
     recognition.onend = () => {
