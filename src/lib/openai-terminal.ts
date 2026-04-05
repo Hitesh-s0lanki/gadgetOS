@@ -1,10 +1,15 @@
 import OpenAI from "openai";
 
-if (!process.env.OPENAI_API_KEY) {
-  throw new Error("Missing OPENAI_API_KEY");
+// Lazy singleton — validated at call time, not module load, so build succeeds
+// even when OPENAI_API_KEY is absent from the CI environment.
+let _openai: OpenAI | null = null;
+function getClient(): OpenAI {
+  if (!_openai) {
+    if (!process.env.OPENAI_API_KEY) throw new Error("Missing OPENAI_API_KEY");
+    _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  }
+  return _openai;
 }
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 interface Step {
   command: string;
@@ -19,7 +24,7 @@ export async function openaiTerminal(
   userRequest: string,
   signal?: AbortSignal
 ): Promise<TerminalResponse> {
-  const response = await openai.chat.completions.create({
+  const response = await getClient().chat.completions.create({
     model: "gpt-4.1",
     messages: [
       {

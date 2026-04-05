@@ -1,16 +1,21 @@
 import OpenAI from "openai";
 
-if (!process.env.OPENAI_API_KEY) {
-  throw new Error("Missing OPENAI_API_KEY");
+// Lazy singleton — validated at call time, not module load, so build succeeds
+// even when OPENAI_API_KEY is absent from the CI environment.
+let _openai: OpenAI | null = null;
+function getClient(): OpenAI {
+  if (!_openai) {
+    if (!process.env.OPENAI_API_KEY) throw new Error("Missing OPENAI_API_KEY");
+    _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  }
+  return _openai;
 }
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const IMAGE_MIME_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/gif", "image/webp", "image/bmp", "image/svg+xml"];
 const TEXT_MIME_TYPES = ["text/plain", "text/markdown"];
 
 export async function getEmbeddingsWithAI(text: string): Promise<number[]> {
-  const res = await openai.embeddings.create({
+  const res = await getClient().embeddings.create({
     model: "text-embedding-ada-002",
     input: text,
   });
@@ -22,7 +27,7 @@ export async function describeImage(file: File): Promise<string> {
   const b64 = Buffer.from(buffer).toString("base64");
   const imageDataUrl = `data:${file.type};base64,${b64}`;
 
-  const res = await openai.chat.completions.create({
+  const res = await getClient().chat.completions.create({
     model: "gpt-4o",
     messages: [
       {
