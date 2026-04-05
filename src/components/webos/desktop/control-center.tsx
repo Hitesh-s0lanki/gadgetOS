@@ -123,7 +123,7 @@ export default function ControlCenter() {
     : `On battery · ${formatSeconds(dischargingTime)} remaining`;
 
   return (
-    <div className="flex flex-col gap-4 w-72">
+    <div className="flex flex-col gap-4 w-72 p-4">
 
       {/* Row 1 — Expandable tiles */}
       <div className="grid grid-cols-2 gap-3">
@@ -153,8 +153,8 @@ export default function ControlCenter() {
 
       {/* Wi-Fi expanded */}
       {wifiExpanded && (
-        <div className="bg-white/50 rounded-xl p-3 flex flex-col gap-2 text-sm">
-          <p className="text-black/60">
+        <div className="bg-white/50 rounded-xl p-3 flex flex-col gap-2 text-sm overflow-hidden">
+          <p className="text-black/60 truncate">
             {networkType !== "unknown" ? `Connected · ${networkType.toUpperCase()}` : "Status unknown"}
           </p>
           {networkDownlink > 0 && (
@@ -178,12 +178,12 @@ export default function ControlCenter() {
 
       {/* Bluetooth expanded */}
       {btExpanded && (
-        <div className="bg-white/50 rounded-xl p-3 flex flex-col gap-2 text-sm">
+        <div className="bg-white/50 rounded-xl p-3 flex flex-col gap-2 text-sm overflow-hidden">
           {bluetoothDevices.length === 0 ? (
             <p className="text-black/40 text-xs">No paired devices</p>
           ) : (
             bluetoothDevices.map((d) => (
-              <p key={d.id} className="text-black/60 text-xs">{d.name}</p>
+              <p key={d.id} className="text-black/60 text-xs truncate">{d.name}</p>
             ))
           )}
           <button

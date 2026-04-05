@@ -147,7 +147,7 @@ export default function Navbar() {
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="bg-white/70 backdrop-blur-2xl border border-white/60 rounded-2xl shadow-xl p-4 mr-4"
+          className="bg-white/70 backdrop-blur-2xl border border-white/60 rounded-2xl shadow-xl p-0 mr-4 w-auto max-h-[80vh] overflow-y-auto"
           sideOffset={15}
           side="bottom"
         >
