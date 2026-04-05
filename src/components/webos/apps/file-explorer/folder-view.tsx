@@ -2,7 +2,7 @@
 
 import { File } from "lucide-react";
 import Image from "next/image";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
@@ -48,29 +48,27 @@ export default function FolderView({
   const [dialogName, setDialogName] = useState("newfolder");
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState("");
-  const renameInputRef = useRef<HTMLInputElement>(null);
+  const [renamingType, setRenamingType] = useState<"file" | "folder" | null>(null);
 
   const renameFileMutation = useMutation(api.files.renameFile);
   const renameFolderMutation = useMutation(api.folders.renameFolder);
   const softDeleteFileMutation = useMutation(api.files.softDeleteFile);
   const softDeleteFolderMutation = useMutation(api.folders.softDeleteFolder);
 
-  useEffect(() => {
-    if (renamingId) renameInputRef.current?.focus();
-  }, [renamingId]);
-
-  const startRename = (id: string, currentName: string) => {
+  const startRename = (id: string, currentName: string, type: "file" | "folder") => {
     setRenamingId(id);
     setRenameValue(currentName);
+    setRenamingType(type);
   };
 
-  const commitRename = async (type: "file" | "folder") => {
-    if (!renamingId || !renameValue.trim()) {
+  const commitRename = async () => {
+    if (!renamingId || !renameValue.trim() || !renamingType) {
       setRenamingId(null);
+      setRenamingType(null);
       return;
     }
     try {
-      if (type === "file") {
+      if (renamingType === "file") {
         await renameFileMutation({ fileId: renamingId as Id<"files">, newName: renameValue.trim() });
       } else {
         await renameFolderMutation({ folderId: renamingId as Id<"folders">, newName: renameValue.trim() });
@@ -79,16 +77,25 @@ export default function FolderView({
       toast.error("Rename failed");
     }
     setRenamingId(null);
+    setRenamingType(null);
   };
 
   const handleDeleteFile = async (fileId: string) => {
-    await softDeleteFileMutation({ fileId: fileId as Id<"files"> });
-    toast.success("Moved to Trash");
+    try {
+      await softDeleteFileMutation({ fileId: fileId as Id<"files"> });
+      toast.success("Moved to Trash");
+    } catch {
+      toast.error("Delete failed");
+    }
   };
 
   const handleDeleteFolder = async (folderId: string) => {
-    await softDeleteFolderMutation({ folderId: folderId as Id<"folders"> });
-    toast.success("Moved to Trash");
+    try {
+      await softDeleteFolderMutation({ folderId: folderId as Id<"folders"> });
+      toast.success("Moved to Trash");
+    } catch {
+      toast.error("Delete failed");
+    }
   };
 
   const handleSave = async () => {
@@ -113,19 +120,19 @@ export default function FolderView({
                     <Image src="/file.svg" alt="folder" width={30} height={30} />
                     {renamingId === f._id ? (
                       <Input
-                        ref={renameInputRef}
+                        autoFocus
                         value={renameValue}
                         onClick={(e) => e.stopPropagation()}
                         onChange={(e) => setRenameValue(e.target.value)}
                         onKeyDown={(e) => {
-                          if (e.key === "Enter") void commitRename("folder");
+                          if (e.key === "Enter") void commitRename();
                           if (e.key === "Escape") setRenamingId(null);
                         }}
-                        onBlur={() => void commitRename("folder")}
+                        onBlur={() => void commitRename()}
                         className="h-6 text-xs px-1 w-full"
                       />
                     ) : (
-                      <span onDoubleClick={(e) => { e.stopPropagation(); startRename(f._id, f.name); }}>
+                      <span onDoubleClick={(e) => { e.stopPropagation(); startRename(f._id, f.name, "folder"); }}>
                         {f.name}
                       </span>
                     )}
@@ -133,7 +140,7 @@ export default function FolderView({
                 </li>
               </ContextMenuTrigger>
               <ContextMenuContent className="w-40">
-                <ContextMenuItem onClick={() => startRename(f._id, f.name)}>Rename</ContextMenuItem>
+                <ContextMenuItem onClick={() => startRename(f._id, f.name, "folder")}>Rename</ContextMenuItem>
                 <ContextMenuItem onClick={() => void handleDeleteFolder(f._id)} className="text-red-600">Delete</ContextMenuItem>
               </ContextMenuContent>
             </ContextMenu>
@@ -151,21 +158,21 @@ export default function FolderView({
                     )}
                     {renamingId === file._id ? (
                       <Input
-                        ref={renameInputRef}
+                        autoFocus
                         value={renameValue}
                         onClick={(e) => e.stopPropagation()}
                         onChange={(e) => setRenameValue(e.target.value)}
                         onKeyDown={(e) => {
-                          if (e.key === "Enter") void commitRename("file");
+                          if (e.key === "Enter") void commitRename();
                           if (e.key === "Escape") setRenamingId(null);
                         }}
-                        onBlur={() => void commitRename("file")}
+                        onBlur={() => void commitRename()}
                         className="h-6 text-xs px-1 w-full"
                       />
                     ) : (
                       <span
                         className="truncate"
-                        onDoubleClick={(e) => { e.stopPropagation(); startRename(file._id, file.name); }}
+                        onDoubleClick={(e) => { e.stopPropagation(); startRename(file._id, file.name, "file"); }}
                       >
                         {file.name.slice(0, 10)}
                       </span>
@@ -175,7 +182,7 @@ export default function FolderView({
               </ContextMenuTrigger>
               <ContextMenuContent className="w-40">
                 <ContextMenuItem onClick={() => onFileClick(file)}>Open</ContextMenuItem>
-                <ContextMenuItem onClick={() => startRename(file._id, file.name)}>Rename</ContextMenuItem>
+                <ContextMenuItem onClick={() => startRename(file._id, file.name, "file")}>Rename</ContextMenuItem>
                 <ContextMenuItem onClick={() => void handleDeleteFile(file._id)} className="text-red-600">Delete</ContextMenuItem>
               </ContextMenuContent>
             </ContextMenu>
