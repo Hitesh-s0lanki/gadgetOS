@@ -10,6 +10,7 @@ import { useSettings } from "@/hooks/webos/use-settings";
 import { useClock } from "@/hooks/webos/use-clock";
 import { useTextEditor } from "@/hooks/webos/use-text-editor";
 import { useTrashBin } from "@/hooks/webos/use-trash-bin";
+import { useChat } from "@/hooks/webos/use-chat";
 
 export default function Taskbar() {
   const { onOpen: openTerminal, isOpen: terminalOpen } = useTerminal();
@@ -20,10 +21,12 @@ export default function Taskbar() {
   const { onOpen: openClock, isOpen: clockOpen } = useClock();
   const { onOpen: openTextEditor, isOpen: textEditorOpen } = useTextEditor();
   const { onOpen: openTrashBin, isOpen: trashBinOpen } = useTrashBin();
+  const { onOpen: openChat, isOpen: chatOpen } = useChat();
 
   const links = [
     { title: "About",         icon: <Image src="/about.svg"     alt="About"         width={50} height={50} className="h-full w-full" />, onClick: openAbout,        isOpen: aboutOpen },
     { title: "Browser",       icon: <Image src="/browser.svg"   alt="Browser"       width={50} height={50} className="h-full w-full" />, onClick: openBrowser,      isOpen: browserOpen },
+    { title: "Chat",          icon: <Image src="/ai.svg"        alt="Chat"          width={50} height={50} className="h-full w-full" />, onClick: openChat,        isOpen: chatOpen },
     { title: "Terminal",      icon: <Image src="/shell.svg"     alt="Terminal"      width={50} height={50} className="h-full w-full" />, onClick: openTerminal,     isOpen: terminalOpen },
     { title: "File Explorer", icon: <Image src="/file.svg"      alt="File Explorer" width={50} height={50} className="h-full w-full" />, onClick: openFileExplorer, isOpen: fileExplorerOpen },
     { title: "Settings",      icon: <Image src="/settings.svg"  alt="Settings"      width={50} height={50} className="h-full w-full" />, onClick: openSettings,     isOpen: settingsOpen },
