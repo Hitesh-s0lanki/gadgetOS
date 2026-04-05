@@ -86,6 +86,9 @@ export const deleteFile = mutation({
 export const renameFile = mutation({
   args: { fileId: v.id("files"), newName: v.string() },
   handler: async (ctx, { fileId, newName }) => {
+    if (!newName.trim()) return;
+    const file = await ctx.db.get(fileId);
+    if (!file || file.userId !== USER_ID) return;
     await ctx.db.patch(fileId, { name: newName });
   },
 });
@@ -93,6 +96,8 @@ export const renameFile = mutation({
 export const softDeleteFile = mutation({
   args: { fileId: v.id("files") },
   handler: async (ctx, { fileId }) => {
+    const file = await ctx.db.get(fileId);
+    if (!file || file.userId !== USER_ID) return;
     await ctx.db.patch(fileId, { deletedAt: Date.now() });
   },
 });
