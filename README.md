@@ -28,17 +28,17 @@ GadgetOS is a fully in-browser operating system experience built with Next.js. I
 
 ## Features
 
-| App | Highlights |
-|-----|-----------|
-| **File Explorer** | Folder tree, file list, image preview, text & semantic (vector) search via Convex |
-| **Terminal** | `ls`, `cd`, `mkdir`, `touch`, `cat` wired to Convex filesystem — unknown commands answered by GPT-4.1 |
-| **Text Editor** | Multi-tab editor that saves files directly to Convex |
-| **Browser** | iframe browser with back/forward/reload stack, Convex-backed bookmarks bar and history, server-side proxy to bypass `X-Frame-Options` |
-| **Clock** | Live analog + digital clock |
-| **Settings** | Sidebar shell with appearance, profile, and shortcut stubs |
-| **About** | System info panel |
-| **Trash Bin** | Soft-delete destination for future file ops |
-| **Desktop Shell** | Frosted glass navbar, animated floating dock, draggable/resizable windows with dnd-kit |
+| App               | Highlights                                                                                                                            |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| **File Explorer** | Folder tree, file list, image preview, text & semantic (vector) search via Convex                                                     |
+| **Terminal**      | `ls`, `cd`, `mkdir`, `touch`, `cat` wired to Convex filesystem — unknown commands answered by GPT-4.1                                 |
+| **Text Editor**   | Multi-tab editor that saves files directly to Convex                                                                                  |
+| **Browser**       | iframe browser with back/forward/reload stack, Convex-backed bookmarks bar and history, server-side proxy to bypass `X-Frame-Options` |
+| **Clock**         | Live analog + digital clock                                                                                                           |
+| **Settings**      | Sidebar shell with appearance, profile, and shortcut stubs                                                                            |
+| **About**         | System info panel                                                                                                                     |
+| **Trash Bin**     | Soft-delete destination for future file ops                                                                                           |
+| **Desktop Shell** | Frosted glass navbar, animated floating dock, draggable/resizable windows with dnd-kit                                                |
 
 ---
 
@@ -141,12 +141,12 @@ gadgetos/
 
 ## API Routes
 
-| Route | Method | Purpose |
-|-------|--------|---------|
-| `/api/proxy` | GET | Server-side web proxy — strips `X-Frame-Options` so sites render in the browser iframe |
-| `/api/upload` | POST | Uploads a file to S3, writes a Convex record |
-| `/api/presign` | GET | Generates a presigned S3 URL for image preview |
-| `/api/openai-terminal` | POST | GPT-4.1 fallback for unknown terminal commands |
+| Route                  | Method | Purpose                                                                                |
+| ---------------------- | ------ | -------------------------------------------------------------------------------------- |
+| `/api/proxy`           | GET    | Server-side web proxy — strips `X-Frame-Options` so sites render in the browser iframe |
+| `/api/upload`          | POST   | Uploads a file to S3, writes a Convex record                                           |
+| `/api/presign`         | GET    | Generates a presigned S3 URL for image preview                                         |
+| `/api/openai-terminal` | POST   | GPT-4.1 fallback for unknown terminal commands                                         |
 
 ---
 
