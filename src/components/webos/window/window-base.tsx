@@ -81,13 +81,13 @@ function ModalWindow({ id, x, y, store, children, width, height }: ModalWindowPr
           : `translate(${translateX}px, ${translateY}px)`,
       }}
       className={cn(
-        "fixed top-0 left-0 z-50 bg-white rounded-xl shadow-xl flex flex-col",
+        "fixed top-0 left-0 z-50 bg-white/60 backdrop-blur-2xl rounded-xl border border-white/65 shadow-[0_8px_40px_rgba(0,0,0,0.18)] ring-1 ring-white/30 flex flex-col animate-in fade-in-0 zoom-in-95 duration-200",
         !isFullscreen ? `${width} ${height}` : "inset-x-0 top-8 bottom-24 w-full rounded-none",
         isMinimized && "hidden"
       )}
     >
       {/* Title bar */}
-      <div className="grid grid-cols-3 items-center bg-gray-100 border-b p-2 rounded-t-xl">
+      <div className="grid grid-cols-3 items-center bg-white/55 backdrop-blur-2xl border-b border-white/60 p-2 rounded-t-xl">
         <div className="flex items-center gap-2 px-2">
           <button
             onClick={(e) => { e.stopPropagation(); onClose(); }}
