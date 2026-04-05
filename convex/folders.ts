@@ -91,7 +91,7 @@ export const renameFolder = mutation({
     if (!newName.trim()) return;
     const folder = await ctx.db.get(folderId);
     if (!folder || folder.userId !== USER_ID) return;
-    await ctx.db.patch(folderId, { name: newName });
+    await ctx.db.patch(folderId, { name: newName.trim() });
   },
 });
 

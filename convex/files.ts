@@ -89,7 +89,7 @@ export const renameFile = mutation({
     if (!newName.trim()) return;
     const file = await ctx.db.get(fileId);
     if (!file || file.userId !== USER_ID) return;
-    await ctx.db.patch(fileId, { name: newName });
+    await ctx.db.patch(fileId, { name: newName.trim() });
   },
 });
 
