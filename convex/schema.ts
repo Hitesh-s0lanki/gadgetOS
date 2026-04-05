@@ -20,17 +20,15 @@ export default defineSchema({
     }),
 
   bookmarks: defineTable({
-    userId: v.id("users"),
     url: v.string(),
     title: v.string(),
-  }).index("by_user", ["userId"]),
+  }),
 
   browserHistory: defineTable({
-    userId: v.id("users"),
     url: v.string(),
     title: v.string(),
     visitedAt: v.number(),
-  }).index("by_user", ["userId"]),
+  }),
 
   files: defineTable({
     userId: v.id("users"),
