@@ -18,6 +18,7 @@ function BrightnessOverlay() {
   if (opacity <= 0) return null;
   return (
     <div
+      data-html2canvas-ignore="true"
       className="pointer-events-none fixed inset-0 z-[100] bg-black"
       style={{ opacity }}
     />

@@ -40,7 +40,6 @@ export function useVoiceControl() {
     isListening,
     setIsListening,
     setIsSleeping,
-    toggleMute,
   } = useOsState();
 
   const handleTranscript = useCallback(
@@ -104,7 +103,9 @@ export function useVoiceControl() {
         return;
       }
       if (t.includes("mute")) {
-        toggleMute();
+        if (!useOsState.getState().isMuted) {
+          useOsState.getState().toggleMute();
+        }
         toast.success("Muted");
         return;
       }
@@ -159,7 +160,7 @@ export function useVoiceControl() {
         toast.error("Voice AI fallback failed");
       }
     },
-    [router, setIsSleeping, toggleMute]
+    [router, setIsSleeping]
   );
 
   useEffect(() => {

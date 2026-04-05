@@ -1,4 +1,3 @@
-"use client";
 // src/hooks/webos/use-os-state.ts
 import { create } from "zustand";
 
@@ -106,7 +105,7 @@ export const useOsState = create<OsState>((set, get) => ({
     const clamped = Math.max(0, Math.min(100, v));
     set(clamped > 0
       ? { volume: clamped, isMuted: false, previousVolume: clamped }
-      : { volume: 0 }
+      : { volume: 0, isMuted: true }
     );
   },
   setBrightness: (v) => {
