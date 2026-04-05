@@ -8,10 +8,30 @@ import { api } from "../../../../../convex/_generated/api";
 import { Id } from "../../../../../convex/_generated/dataModel";
 import { Input } from "@/components/ui/input";
 import { useImagePreview } from "@/hooks/webos/use-image-preview";
+import { useTextEditor } from "@/hooks/webos/use-text-editor";
 import FolderView from "./folder-view";
 import SearchWindow from "./search-window";
 import { toast } from "sonner";
 import { FileData } from "@/types";
+
+type File_ = {
+  _id: string;
+  name: string;
+  type?: string | null;
+  contentUrl?: string | null;
+  content?: string | null;
+};
+
+const TEXT_TYPES = [
+  "text/plain",
+  "text/markdown",
+  "application/json",
+  "text/html",
+  "text/css",
+  "text/javascript",
+  "application/javascript",
+];
+const IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp", "image/gif"];
 
 export default function FileExplorerApp() {
   const [selected, setSelected] = useState("main");
@@ -20,6 +40,7 @@ export default function FileExplorerApp() {
   const [isSearching, setIsSearching] = useState(false);
 
   const { onOpen: openImagePreview } = useImagePreview();
+  const { onOpen: openTextEditor } = useTextEditor();
   const rootFolders = useQuery(api.folders.getRootFolders);
   const vectorSearch = useAction(api.search.searchFiles);
   const textResults = useQuery(
@@ -107,6 +128,14 @@ export default function FileExplorerApp() {
     }
   };
 
+  const handleFileClick = (file: File_) => {
+    if (IMAGE_TYPES.includes(file.type ?? "")) {
+      openImagePreview(file.contentUrl ?? "");
+    } else if (TEXT_TYPES.includes(file.type ?? "")) {
+      openTextEditor({ name: file.name, content: file.content ?? "" });
+    }
+  };
+
   return (
     <div className="bg-white/60 backdrop-blur-2xl w-full h-full flex flex-col overflow-hidden">
       <div className="flex flex-1 overflow-hidden">
@@ -158,7 +187,7 @@ export default function FileExplorerApp() {
                 breadcrumbs={breadcrumbs}
                 onCreateFolder={handleCreateFolder}
                 onUpload={handleUpload}
-                onFileClick={openImagePreview}
+                onFileClick={handleFileClick}
               />
             </div>
           )}
