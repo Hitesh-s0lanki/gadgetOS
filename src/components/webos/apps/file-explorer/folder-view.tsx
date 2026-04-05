@@ -2,7 +2,10 @@
 
 import { File } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useMutation } from "convex/react";
+import { api } from "../../../../../convex/_generated/api";
+import { Id } from "../../../../../convex/_generated/dataModel";
 import {
   ContextMenu,
   ContextMenuTrigger,
@@ -13,11 +16,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ImagePreview from "./image-preview";
 import { Breadcrumbs } from "./breadcrumbs";
+import { toast } from "sonner";
 
-const IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"];
+const IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp", "image/gif"];
 
 type Folder = { _id: string; name: string };
-type File_ = { _id: string; name: string; type?: string | null; contentUrl?: string | null };
+type File_ = {
+  _id: string;
+  name: string;
+  type?: string | null;
+  contentUrl?: string | null;
+  content?: string | null;
+};
 type Crumb = { _id: string; name: string };
 
 type Props = {
@@ -28,7 +38,7 @@ type Props = {
   breadcrumbs: Crumb[];
   onCreateFolder: (name: string, parentId: string) => Promise<void>;
   onUpload: (files: FileList, folderId: string) => Promise<void>;
-  onFileClick: (contentUrl: string) => void;
+  onFileClick: (file: File_) => void;
 };
 
 export default function FolderView({
@@ -36,6 +46,50 @@ export default function FolderView({
 }: Props) {
   const [showDialog, setShowDialog] = useState(false);
   const [dialogName, setDialogName] = useState("newfolder");
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState("");
+  const renameInputRef = useRef<HTMLInputElement>(null);
+
+  const renameFileMutation = useMutation(api.files.renameFile);
+  const renameFolderMutation = useMutation(api.folders.renameFolder);
+  const softDeleteFileMutation = useMutation(api.files.softDeleteFile);
+  const softDeleteFolderMutation = useMutation(api.folders.softDeleteFolder);
+
+  useEffect(() => {
+    if (renamingId) renameInputRef.current?.focus();
+  }, [renamingId]);
+
+  const startRename = (id: string, currentName: string) => {
+    setRenamingId(id);
+    setRenameValue(currentName);
+  };
+
+  const commitRename = async (type: "file" | "folder") => {
+    if (!renamingId || !renameValue.trim()) {
+      setRenamingId(null);
+      return;
+    }
+    try {
+      if (type === "file") {
+        await renameFileMutation({ fileId: renamingId as Id<"files">, newName: renameValue.trim() });
+      } else {
+        await renameFolderMutation({ folderId: renamingId as Id<"folders">, newName: renameValue.trim() });
+      }
+    } catch {
+      toast.error("Rename failed");
+    }
+    setRenamingId(null);
+  };
+
+  const handleDeleteFile = async (fileId: string) => {
+    await softDeleteFileMutation({ fileId: fileId as Id<"files"> });
+    toast.success("Moved to Trash");
+  };
+
+  const handleDeleteFolder = async (folderId: string) => {
+    await softDeleteFolderMutation({ folderId: folderId as Id<"folders"> });
+    toast.success("Moved to Trash");
+  };
 
   const handleSave = async () => {
     if (!dialogName.trim()) return;
@@ -45,31 +99,86 @@ export default function FolderView({
 
   return (
     <ContextMenu>
-      <ContextMenuTrigger className="w-full h-full overflow-auto relative">
+      <ContextMenuTrigger className="block w-full h-full overflow-auto relative">
         <Breadcrumbs breadcrumbs={breadcrumbs} folderId={folderId} setFolderId={setFolderId} onUpload={onUpload} />
         <ul className="mb-6 grid grid-cols-4 gap-4">
           {childFolders.map((f) => (
-            <li key={f._id}>
-              <button
-                className="flex flex-col items-center space-y-2 hover:bg-gray-100 px-2 py-3 rounded w-full text-left text-sm text-muted-foreground"
-                onClick={() => setFolderId(f._id)}
-              >
-                <Image src="/file.svg" alt="folder" width={30} height={30} />
-                <span>{f.name}</span>
-              </button>
-            </li>
+            <ContextMenu key={f._id}>
+              <ContextMenuTrigger asChild>
+                <li>
+                  <button
+                    className="flex flex-col items-center space-y-2 hover:bg-gray-100 px-2 py-3 rounded w-full text-left text-sm text-muted-foreground"
+                    onClick={() => setFolderId(f._id)}
+                  >
+                    <Image src="/file.svg" alt="folder" width={30} height={30} />
+                    {renamingId === f._id ? (
+                      <Input
+                        ref={renameInputRef}
+                        value={renameValue}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => setRenameValue(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") void commitRename("folder");
+                          if (e.key === "Escape") setRenamingId(null);
+                        }}
+                        onBlur={() => void commitRename("folder")}
+                        className="h-6 text-xs px-1 w-full"
+                      />
+                    ) : (
+                      <span onDoubleClick={(e) => { e.stopPropagation(); startRename(f._id, f.name); }}>
+                        {f.name}
+                      </span>
+                    )}
+                  </button>
+                </li>
+              </ContextMenuTrigger>
+              <ContextMenuContent className="w-40">
+                <ContextMenuItem onClick={() => startRename(f._id, f.name)}>Rename</ContextMenuItem>
+                <ContextMenuItem onClick={() => void handleDeleteFolder(f._id)} className="text-red-600">Delete</ContextMenuItem>
+              </ContextMenuContent>
+            </ContextMenu>
           ))}
+
           {files.map((file) => (
-            <li key={file._id} onClick={() => file.contentUrl && onFileClick(file.contentUrl)}>
-              <div className="flex flex-col items-center space-y-2 hover:bg-gray-100 px-2 py-3 rounded cursor-pointer text-center text-sm text-muted-foreground">
-                {IMAGE_TYPES.includes(file.type ?? "") ? (
-                  <ImagePreview s3Key={file.contentUrl ?? ""} alt={file.name} />
-                ) : (
-                  <File className="size-8 text-gray-600" />
-                )}
-                <span className="truncate">{file.name.slice(0, 10)}</span>
-              </div>
-            </li>
+            <ContextMenu key={file._id}>
+              <ContextMenuTrigger asChild>
+                <li onClick={() => file.contentUrl && onFileClick(file)}>
+                  <div className="flex flex-col items-center space-y-2 hover:bg-gray-100 px-2 py-3 rounded cursor-pointer text-center text-sm text-muted-foreground">
+                    {IMAGE_TYPES.includes(file.type ?? "") ? (
+                      <ImagePreview s3Key={file.contentUrl ?? ""} alt={file.name} />
+                    ) : (
+                      <File className="size-8 text-gray-600" />
+                    )}
+                    {renamingId === file._id ? (
+                      <Input
+                        ref={renameInputRef}
+                        value={renameValue}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => setRenameValue(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") void commitRename("file");
+                          if (e.key === "Escape") setRenamingId(null);
+                        }}
+                        onBlur={() => void commitRename("file")}
+                        className="h-6 text-xs px-1 w-full"
+                      />
+                    ) : (
+                      <span
+                        className="truncate"
+                        onDoubleClick={(e) => { e.stopPropagation(); startRename(file._id, file.name); }}
+                      >
+                        {file.name.slice(0, 10)}
+                      </span>
+                    )}
+                  </div>
+                </li>
+              </ContextMenuTrigger>
+              <ContextMenuContent className="w-40">
+                <ContextMenuItem onClick={() => onFileClick(file)}>Open</ContextMenuItem>
+                <ContextMenuItem onClick={() => startRename(file._id, file.name)}>Rename</ContextMenuItem>
+                <ContextMenuItem onClick={() => void handleDeleteFile(file._id)} className="text-red-600">Delete</ContextMenuItem>
+              </ContextMenuContent>
+            </ContextMenu>
           ))}
         </ul>
 
@@ -84,7 +193,7 @@ export default function FolderView({
               </div>
               <div className="flex space-x-2 justify-center pb-4">
                 <Button onClick={() => setShowDialog(false)} className="px-3 h-8 text-xs bg-black/60">Cancel</Button>
-                <Button onClick={handleSave} className="px-3 h-8 text-xs bg-black/60">Save</Button>
+                <Button onClick={() => void handleSave()} className="px-3 h-8 text-xs bg-black/60">Save</Button>
               </div>
             </div>
           </div>
