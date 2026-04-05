@@ -11,6 +11,12 @@ jobs:
     name: Build and Lint
     runs-on: ubuntu-latest
 
+    env:
+      NEXT_TELEMETRY_DISABLED: 1
+      # Convex — NEXT_PUBLIC_* vars are inlined at build time by Next.js
+      NEXT_PUBLIC_CONVEX_URL: ${{ secrets.NEXT_PUBLIC_CONVEX_URL }}
+      NEXT_PUBLIC_APP_VERSION: ${{ secrets.NEXT_PUBLIC_APP_VERSION }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
