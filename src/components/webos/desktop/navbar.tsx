@@ -16,15 +16,15 @@ export default function Navbar() {
   if (!isMounted) return null;
 
   return (
-    <div className="h-8 bg-white/30 w-full px-2 py-1 flex justify-between items-center">
+    <div className="h-8 bg-white/35 backdrop-blur-2xl border-b border-white/50 w-full px-2 py-1 flex justify-between items-center">
       {/* Left: GadgetOS menu */}
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="ghost" className="h-6 hover:bg-white/20 rounded-sm text-sm">
+          <Button variant="ghost" className="h-6 hover:bg-white/30 rounded-md text-sm font-semibold text-black/70 transition-colors duration-150">
             GadgetOS
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="bg-white/50 border-0 ml-3 p-4 w-full" sideOffset={15} side="bottom">
+        <PopoverContent className="bg-white/70 backdrop-blur-2xl border border-white/60 rounded-2xl shadow-xl ml-3 p-4 w-full" sideOffset={15} side="bottom">
           <div className="flex items-center justify-between">
             <Image src="/icons/shut-down.svg" alt="Shutdown" width={25} height={25} className="bg-white/30 rounded-sm p-1 cursor-pointer hover:bg-white/20" />
             <Image src="/icons/restart.svg" alt="Restart" width={25} height={25} className="bg-white/30 rounded-sm p-1 cursor-pointer hover:bg-white/20" />
@@ -42,7 +42,7 @@ export default function Navbar() {
             <Image src="/icons/battery.svg" alt="Battery" width={15} height={15} />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="border-0 w-full mr-4 bg-transparent shadow-none" sideOffset={15} side="bottom">
+        <PopoverContent className="border border-white/60 w-full mr-4 bg-white/70 backdrop-blur-2xl shadow-xl rounded-2xl" sideOffset={15} side="bottom">
           <div className="flex flex-col gap-6 items-center bg-white/50 py-5 px-3 rounded-xl">
             <div className="grid grid-cols-4 gap-4 items-center justify-center">
               {[
@@ -54,7 +54,7 @@ export default function Navbar() {
                 { src: "/icons/battery-saver.svg", label: "Power Save" },
               ].map(({ src, label }) => (
                 <div key={label} className="flex flex-col items-center gap-1">
-                  <div className="flex items-center justify-center p-2 rounded-full bg-white cursor-pointer hover:bg-white/50">
+                  <div className="flex items-center justify-center p-2 rounded-full bg-white/60 cursor-pointer hover:bg-white/90 transition-colors duration-150">
                     <Image src={src} alt={label} width={20} height={20} />
                   </div>
                   <p className="text-[10px]">{label}</p>
