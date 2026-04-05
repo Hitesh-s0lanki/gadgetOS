@@ -34,6 +34,8 @@ interface TileProps {
 function Tile({ active, label, icon, onClick, expandable, expanded }: TileProps) {
   return (
     <button
+      type="button"
+      aria-pressed={active}
       onClick={onClick}
       className={cn(
         "flex flex-col items-start gap-1 rounded-2xl p-3 w-full transition-colors duration-150",
@@ -92,10 +94,13 @@ export default function ControlCenter() {
           bluetooth: { requestDevice: (o: object) => Promise<{ id: string; name?: string }> };
         }
       ).bluetooth.requestDevice({ acceptAllDevices: true });
-      setBluetoothDevices([
-        ...bluetoothDevices,
-        { id: device.id, name: device.name ?? "Unknown device" },
-      ]);
+      const current = useOsState.getState().bluetoothDevices;
+      if (!current.some((d) => d.id === device.id)) {
+        setBluetoothDevices([
+          ...current,
+          { id: device.id, name: device.name ?? "Unknown device" },
+        ]);
+      }
     } catch {
       // user cancelled picker — not an error
     } finally {
@@ -156,9 +161,11 @@ export default function ControlCenter() {
             <p className="text-black/40 text-xs">↓ {networkDownlink} Mbps</p>
           )}
           <button
+            type="button"
+            disabled={airplaneModeEnabled}
             onClick={() => setWifiEnabled(!wifiEnabled)}
             className={cn(
-              "mt-1 text-xs rounded-lg px-3 py-1.5 font-medium transition-colors duration-150",
+              "mt-1 text-xs rounded-lg px-3 py-1.5 font-medium transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed",
               wifiEnabled
                 ? "bg-indigo-500 text-white hover:bg-indigo-600"
                 : "bg-white/60 text-black/60 hover:bg-white/80"
@@ -180,6 +187,7 @@ export default function ControlCenter() {
             ))
           )}
           <button
+            type="button"
             onClick={handleScanBluetooth}
             disabled={btScanning}
             className="text-xs rounded-lg px-3 py-1.5 font-medium bg-white/60 text-black/60 hover:bg-white/80 transition-colors duration-150 disabled:opacity-50"
@@ -187,9 +195,11 @@ export default function ControlCenter() {
             {btScanning ? "Scanning…" : "Scan for devices"}
           </button>
           <button
+            type="button"
+            disabled={airplaneModeEnabled}
             onClick={() => setBluetoothEnabled(!bluetoothEnabled)}
             className={cn(
-              "text-xs rounded-lg px-3 py-1.5 font-medium transition-colors duration-150",
+              "text-xs rounded-lg px-3 py-1.5 font-medium transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed",
               bluetoothEnabled
                 ? "bg-indigo-500 text-white hover:bg-indigo-600"
                 : "bg-white/60 text-black/60 hover:bg-white/80"
