@@ -1,3 +1,4 @@
+"use client";
 // src/hooks/webos/use-os-state.ts
 import { create } from "zustand";
 
@@ -6,7 +7,7 @@ export interface BluetoothDeviceInfo {
   name: string;
 }
 
-interface OsState {
+export interface OsState {
   // Toggles
   wifiEnabled: boolean;
   bluetoothEnabled: boolean;
@@ -18,6 +19,7 @@ interface OsState {
   volume: number;
   previousVolume: number;
   brightness: number;
+  previousBrightness: number;
 
   // Overlays
   isSleeping: boolean;
@@ -63,6 +65,7 @@ export const useOsState = create<OsState>((set, get) => ({
   volume: 70,
   previousVolume: 70,
   brightness: 100,
+  previousBrightness: 100,
   isSleeping: false,
   isListening: false,
   batteryLevel: 1,
@@ -76,12 +79,20 @@ export const useOsState = create<OsState>((set, get) => ({
   setWifiEnabled: (v) => set({ wifiEnabled: v }),
   setBluetoothEnabled: (v) => set({ bluetoothEnabled: v }),
   setAirplaneModeEnabled: (v) => {
-    set({ airplaneModeEnabled: v });
-    if (v) set({ wifiEnabled: false, bluetoothEnabled: false });
+    set(v
+      ? { airplaneModeEnabled: true, wifiEnabled: false, bluetoothEnabled: false }
+      : {
+          // Turning airplane mode off intentionally does NOT auto-restore wifi/bluetooth.
+          // User must re-enable them manually (consistent with mobile OS behavior).
+          airplaneModeEnabled: false,
+        }
+    );
   },
   setBatterySaverEnabled: (v) => {
-    set({ batterySaverEnabled: v });
-    if (v) set({ brightness: 50 });
+    set(v
+      ? { batterySaverEnabled: true, brightness: 50 }
+      : { batterySaverEnabled: false, brightness: get().previousBrightness }
+    );
   },
   toggleMute: () => {
     const { isMuted, volume, previousVolume } = get();
@@ -92,10 +103,20 @@ export const useOsState = create<OsState>((set, get) => ({
     }
   },
   setVolume: (v) => {
-    set({ volume: v });
-    if (v > 0) set({ isMuted: false, previousVolume: v });
+    const clamped = Math.max(0, Math.min(100, v));
+    set(clamped > 0
+      ? { volume: clamped, isMuted: false, previousVolume: clamped }
+      : { volume: 0 }
+    );
   },
-  setBrightness: (v) => set({ brightness: v }),
+  setBrightness: (v) => {
+    const clamped = Math.max(10, Math.min(100, v));
+    const { batterySaverEnabled } = get();
+    set(batterySaverEnabled
+      ? { brightness: clamped }
+      : { brightness: clamped, previousBrightness: clamped }
+    );
+  },
   setIsSleeping: (v) => set({ isSleeping: v }),
   setIsListening: (v) => set({ isListening: v }),
   setBatteryInfo: (level, charging, chargingTime, dischargingTime) =>
