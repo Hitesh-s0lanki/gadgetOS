@@ -1,87 +1,157 @@
+// src/components/webos/desktop/navbar.tsx
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Slider } from "@/components/ui/slider";
-import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { useOsState } from "@/hooks/webos/use-os-state";
+import ControlCenter from "./control-center";
+
+function LiveClock() {
+  const [now, setNow] = useState<Date | null>(null);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setNow(new Date());
+    const id = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  if (!now) return null;
+
+  const datePart = now.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  });
+  const timePart = now.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  return (
+    <time className="text-sm font-medium text-black/70 absolute left-1/2 -translate-x-1/2 whitespace-nowrap select-none">
+      {datePart}&nbsp;&nbsp;{timePart}
+    </time>
+  );
+}
 
 export default function Navbar() {
+  const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
-  const [currentTime, setCurrentTime] = useState(new Date());
+
+  const { wifiEnabled, airplaneModeEnabled, isMuted, isListening } = useOsState();
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
   }, []);
-  useEffect(() => {
-    const id = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(id);
-  }, []);
 
   if (!isMounted) return null;
 
-  const formattedTime = currentTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  const formattedDate = currentTime.toLocaleDateString("en-GB").replaceAll("/", ".");
-
   return (
-    <div className="h-8 bg-white/35 backdrop-blur-2xl border-b border-white/50 w-full px-2 py-1 flex justify-between items-center">
-      {/* Left: GadgetOS menu */}
+    <div className="h-8 bg-white/35 backdrop-blur-2xl border-b border-white/50 w-full px-2 flex items-center justify-between relative">
+
+      {/* Left — GadgetOS menu */}
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="ghost" className="h-6 hover:bg-white/30 rounded-md text-sm font-semibold text-black/70 transition-colors duration-150">
+          <Button
+            variant="ghost"
+            className="h-6 px-2 hover:bg-white/30 rounded-md text-sm font-semibold text-black/70"
+          >
             GadgetOS
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="bg-white/70 backdrop-blur-2xl border border-white/60 rounded-2xl shadow-xl ml-3 p-4 w-full" sideOffset={15} side="bottom">
-          <div className="flex items-center justify-between">
-            <Image src="/icons/shut-down.svg" alt="Shutdown" width={25} height={25} className="bg-white/30 rounded-sm p-1 cursor-pointer hover:bg-white/20" />
-            <Image src="/icons/restart.svg" alt="Restart" width={25} height={25} className="bg-white/30 rounded-sm p-1 cursor-pointer hover:bg-white/20" />
-            <Image src="/icons/sleep.svg" alt="Sleep" width={25} height={25} className="bg-white/30 rounded-sm p-1 cursor-pointer hover:bg-white/20" />
+        <PopoverContent
+          className="bg-white/70 backdrop-blur-2xl border border-white/60 rounded-2xl shadow-xl p-4 w-auto ml-3"
+          sideOffset={15}
+          side="bottom"
+        >
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => router.push("/webos/lock-screen")}
+              className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white/50 transition-colors duration-150"
+              aria-label="Shutdown"
+            >
+              <Image src="/icons/shut-down.svg" alt="Shutdown" width={24} height={24} />
+              <span className="text-[10px] text-black/60">Shutdown</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white/50 transition-colors duration-150"
+              aria-label="Restart"
+            >
+              <Image src="/icons/restart.svg" alt="Restart" width={24} height={24} />
+              <span className="text-[10px] text-black/60">Restart</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => useOsState.getState().setIsSleeping(true)}
+              className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white/50 transition-colors duration-150"
+              aria-label="Sleep"
+            >
+              <Image src="/icons/sleep.svg" alt="Sleep" width={24} height={24} />
+              <span className="text-[10px] text-black/60">Sleep</span>
+            </button>
           </div>
         </PopoverContent>
       </Popover>
 
-      {/* Right: date-time + system status */}
-      <div className="flex items-center gap-3">
-        <span className="text-xs font-semibold text-black/70">{formattedTime}</span>
-        <span className="text-xs text-black/45">{formattedDate}</span>
-        <Popover>
+      {/* Center — Live clock */}
+      <LiveClock />
+
+      {/* Right — System tray */}
+      <Popover>
         <PopoverTrigger asChild>
-          <Button variant="ghost" className="h-6 hover:bg-white/30 rounded-md text-sm flex gap-4 transition-colors duration-150">
-            <Image src="/icons/wifi.svg" alt="WiFi" width={15} height={15} />
-            <Image src="/icons/sound.svg" alt="Sound" width={15} height={15} />
-            <Image src="/icons/battery.svg" alt="Battery" width={15} height={15} />
+          <Button
+            variant="ghost"
+            className="h-6 px-2 hover:bg-white/30 rounded-md flex items-center gap-2"
+            aria-label="Control Center"
+          >
+            <Image
+              src="/icons/wifi.svg"
+              alt="WiFi"
+              width={14}
+              height={14}
+              className={cn(
+                "transition-opacity",
+                (!wifiEnabled || airplaneModeEnabled) ? "opacity-30" : "opacity-70"
+              )}
+            />
+            <Image
+              src={isMuted ? "/icons/soundless.svg" : "/icons/sound.svg"}
+              alt="Sound"
+              width={14}
+              height={14}
+              className="opacity-70"
+            />
+            <Image
+              src="/icons/battery.svg"
+              alt="Battery"
+              width={14}
+              height={14}
+              className="opacity-70"
+            />
+            {isListening && (
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+            )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="border border-white/60 w-full mr-4 bg-white/70 backdrop-blur-2xl shadow-xl rounded-2xl" sideOffset={15} side="bottom">
-          <div className="flex flex-col gap-6 items-center bg-white/50 py-5 px-3 rounded-xl">
-            <div className="grid grid-cols-4 gap-4 items-center justify-center">
-              {[
-                { src: "/icons/wifi.svg", label: "Wi-Fi" },
-                { src: "/icons/soundless.svg", label: "Mute" },
-                { src: "/icons/screenshot.svg", label: "Screenshot" },
-                { src: "/icons/plane-mode.svg", label: "Airplane" },
-                { src: "/icons/bluetooth.svg", label: "Bluetooth" },
-                { src: "/icons/battery-saver.svg", label: "Power Save" },
-              ].map(({ src, label }) => (
-                <div key={label} className="flex flex-col items-center gap-1">
-                  <div className="flex items-center justify-center p-2 rounded-full bg-white/60 cursor-pointer hover:bg-white/90 transition-colors duration-150">
-                    <Image src={src} alt={label} width={20} height={20} />
-                  </div>
-                  <p className="text-[10px]">{label}</p>
-                </div>
-              ))}
-            </div>
-            <div className="flex items-center w-full px-3 pb-2">
-              <Image src="/icons/sun-line.svg" alt="Brightness" width={18} height={18} />
-              <Slider defaultValue={[50]} max={100} step={1} className={cn("w-full mx-2")} />
-            </div>
-          </div>
+        <PopoverContent
+          className="bg-white/70 backdrop-blur-2xl border border-white/60 rounded-2xl shadow-xl p-4 mr-4"
+          sideOffset={15}
+          side="bottom"
+        >
+          <ControlCenter />
         </PopoverContent>
-        </Popover>
-      </div>
+      </Popover>
+
     </div>
   );
 }
