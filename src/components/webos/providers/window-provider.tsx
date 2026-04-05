@@ -7,6 +7,7 @@ import { generateUUID } from "@/lib/utils";
 import WindowBase from "@/components/webos/window/window-base";
 import { useAbout } from "@/hooks/webos/use-about";
 import { useBrowser } from "@/hooks/webos/use-browser";
+import { useChat } from "@/hooks/webos/use-chat";
 import { useClock } from "@/hooks/webos/use-clock";
 import { useFileExplorer } from "@/hooks/webos/use-file-explorer";
 import { useSettings } from "@/hooks/webos/use-settings";
@@ -16,6 +17,7 @@ import { useTrashBin } from "@/hooks/webos/use-trash-bin";
 import { useImagePreview } from "@/hooks/webos/use-image-preview";
 import AboutApp from "@/components/webos/apps/about";
 import BrowserApp from "@/components/webos/apps/browser";
+import ChatApp from "@/components/webos/apps/chat";
 import ClockApp from "@/components/webos/apps/clock";
 import FileExplorerApp from "@/components/webos/apps/file-explorer/file-explorer";
 import SettingsApp from "@/components/webos/apps/settings";
@@ -103,6 +105,9 @@ export default function WindowProvider() {
       </WindowBase>
       <WindowBase store={useTrashBin} defaultPosition={{ x: 350, y: 120 }} width="w-[400px]" height="h-[300px]">
         <TrashBinApp />
+      </WindowBase>
+      <WindowBase store={useChat} defaultPosition={{ x: 220, y: 90 }} width="w-[600px]" height="h-[500px]">
+        <ChatApp />
       </WindowBase>
       <ImagePreviewWindow />
     </>
