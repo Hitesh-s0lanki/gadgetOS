@@ -31,6 +31,11 @@ export default defineSchema({
     visitedAt: v.number(),
   }),
 
+  chatMessages: defineTable({
+    role: v.union(v.literal("user"), v.literal("assistant")),
+    content: v.string(),
+  }),
+
   files: defineTable({
     userId: v.id("users"),
     folderId: v.id("folders"),
