@@ -108,9 +108,9 @@ export default function FileExplorerApp() {
   };
 
   return (
-    <div className="bg-white bg-opacity-70 backdrop-blur-md w-full h-full flex flex-col overflow-hidden">
+    <div className="bg-white/60 backdrop-blur-2xl w-full h-full flex flex-col overflow-hidden">
       <div className="flex flex-1 overflow-hidden">
-        <div className="w-56 bg-white bg-opacity-50 border-r border-gray-200 flex flex-col pb-2">
+        <div className="w-56 bg-white/50 backdrop-blur-xl border-r border-white/50 flex flex-col pb-2">
           <div className="p-3 flex items-center space-x-2">
             <div className="relative flex items-center flex-1">
               <Search className="absolute left-2 text-gray-400 size-4" />
@@ -128,16 +128,16 @@ export default function FileExplorerApp() {
               <div
                 key={String(folder._id)}
                 onClick={() => setSelected(String(folder._id))}
-                className={`px-4 py-2 flex justify-between items-center cursor-pointer hover:bg-white/50 ${selected === String(folder._id) ? "bg-white/50 font-semibold" : ""}`}
+                className={`px-3 py-2 flex justify-between items-center cursor-pointer rounded-lg transition-colors duration-150 hover:bg-white/60 ${selected === String(folder._id) ? "bg-indigo-50 text-indigo-700 font-semibold" : ""}`}
               >
                 <span className="text-sm text-gray-800 capitalize">{String(folder.name)}</span>
-                <ChevronRight className="text-gray-500 size-4" />
+                <ChevronRight className={`size-4 ${selected === String(folder._id) ? "text-indigo-500" : "text-gray-400"}`} />
               </div>
             ))}
           </div>
         </div>
 
-        <div className="flex-1 p-3 overflow-auto flex flex-col justify-center items-center">
+        <div className={`flex-1 overflow-auto flex flex-col ${selected === "main" && !searchText ? "justify-center items-center p-3" : ""}`}>
           {selected === "main" && searchText === "" && (
             <div className="flex items-center space-x-4 mb-4">
               <Image src="/file.svg" alt="File Explorer" width={80} height={80} className="rounded-lg" />
@@ -149,20 +149,24 @@ export default function FileExplorerApp() {
           )}
 
           {selected !== "main" && searchText === "" && (
-            <FolderView
-              folderId={selected}
-              setFolderId={setSelected}
-              childFolders={childFolders}
-              files={filesInFolder}
-              breadcrumbs={breadcrumbs}
-              onCreateFolder={handleCreateFolder}
-              onUpload={handleUpload}
-              onFileClick={openImagePreview}
-            />
+            <div className="w-full h-full p-3">
+              <FolderView
+                folderId={selected}
+                setFolderId={setSelected}
+                childFolders={childFolders}
+                files={filesInFolder}
+                breadcrumbs={breadcrumbs}
+                onCreateFolder={handleCreateFolder}
+                onUpload={handleUpload}
+                onFileClick={openImagePreview}
+              />
+            </div>
           )}
 
           {searchText !== "" && (
-            <SearchWindow results={searchResults} isLoading={isSearching} searchTerm={searchText} />
+            <div className="w-full h-full p-3">
+              <SearchWindow results={searchResults} isLoading={isSearching} searchTerm={searchText} />
+            </div>
           )}
         </div>
       </div>
