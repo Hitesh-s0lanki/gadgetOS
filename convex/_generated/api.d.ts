@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as browser from "../browser.js";
 import type * as files from "../files.js";
 import type * as folders from "../folders.js";
 import type * as openai from "../openai.js";
@@ -21,6 +22,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  browser: typeof browser;
   files: typeof files;
   folders: typeof folders;
   openai: typeof openai;

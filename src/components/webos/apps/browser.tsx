@@ -10,6 +10,7 @@ import {
   History,
   X,
   Trash2,
+  ExternalLink,
 } from "lucide-react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
@@ -44,7 +45,8 @@ export default function BrowserApp() {
   const addHistoryEntry = useMutation(api.browser.addHistoryEntry);
   const clearHistory    = useMutation(api.browser.clearHistory);
 
-  const currentUrl   = stackIndex >= 0 ? stack[stackIndex] : null;
+  const currentUrl    = stackIndex >= 0 ? stack[stackIndex] : null;
+  const proxiedUrl    = currentUrl ? `/api/proxy?url=${encodeURIComponent(currentUrl)}` : null;
   const canGoBack    = stackIndex > 0;
   const canGoForward = stackIndex < stack.length - 1;
   const isBookmarked = currentUrl ? bookmarks.some((b) => b.url === currentUrl) : false;
@@ -141,6 +143,16 @@ export default function BrowserApp() {
           />
         </button>
 
+        {/* Open in new tab */}
+        <button
+          onClick={() => currentUrl && window.open(currentUrl, "_blank")}
+          disabled={!currentUrl}
+          title="Open in new tab"
+          className="p-1 rounded-md hover:bg-white/60 disabled:opacity-30 transition-colors duration-150"
+        >
+          <ExternalLink className="w-4 h-4 text-gray-600" />
+        </button>
+
         {/* History */}
         <div className="relative">
           <button
@@ -208,12 +220,13 @@ export default function BrowserApp() {
 
       {/* ── Content ──────────────────────────────────────────────────────── */}
       <div className="flex-1 h-0">
-        {currentUrl ? (
+        {proxiedUrl ? (
           <iframe
             key={`${currentUrl}-${reloadKey}`}
-            src={currentUrl}
+            src={proxiedUrl}
             className="w-full h-full border-0"
             title="Browser"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
           />
         ) : (
           <div className="flex flex-col items-center justify-center h-full gap-5">
