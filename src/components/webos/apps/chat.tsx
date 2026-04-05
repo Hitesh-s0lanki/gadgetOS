@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
-import { TextStreamChatTransport, UIMessage } from "ai";
+import { TextStreamChatTransport } from "ai";
+import type { UIMessage } from "ai";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Send } from "lucide-react";
@@ -15,11 +16,8 @@ export default function ChatApp() {
 
   const { messages, sendMessage, status, setMessages } = useChat({
     transport: new TextStreamChatTransport({ api: "/api/chat" }),
-    onFinish: async ({ message }: { message: UIMessage }) => {
-      const textPart = message.parts.find((p) => p.type === "text");
-      if (textPart && textPart.type === "text") {
-        await addMessage({ role: "assistant", content: textPart.text });
-      }
+    onFinish: ({ message }: { message: UIMessage }) => {
+      addMessage({ role: "assistant", content: message.parts.filter((p) => p.type === "text").map((p) => (p as { type: string; text: string }).text).join("") }).catch(() => {});
     },
   });
 
@@ -49,8 +47,12 @@ export default function ChatApp() {
     if (!input.trim() || isLoading) return;
     const text = input.trim();
     setInput("");
-    await addMessage({ role: "user", content: text });
-    sendMessage({ text });
+    try {
+      await addMessage({ role: "user", content: text });
+      sendMessage({ text });
+    } catch {
+      setInput(text);
+    }
   };
 
   return (
