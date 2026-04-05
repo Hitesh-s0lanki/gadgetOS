@@ -28,18 +28,25 @@ export default function AboutApp() {
   }, []);
 
   return (
-    <div className="bg-purple-200 bg-opacity-70 p-6 w-full h-full gap-5 flex flex-col justify-center items-center text-gray-800 rounded-b-xl">
+    <div className="bg-white/60 backdrop-blur-2xl p-6 w-full h-full gap-5 flex flex-col justify-center items-center text-gray-800 rounded-b-xl">
       <div className="flex items-center space-x-8 mb-4">
         <Image src="/gadgetOS.svg" alt="gadgetOS logo" height={64} width={64} className="rounded-full ring-4 ring-white/30" />
         <div className="space-y-1">
           <h2 className="text-2xl font-bold">GadgetOS</h2>
-          <p className="text-sm text-gray-700">Version: {version}</p>
+          <p className="text-sm text-black/50">Version: {version}</p>
         </div>
       </div>
-      <div className="space-y-1 mb-6 text-sm w-1/2 text-center">
-        <p><span className="font-medium">Storage:</span> {storage}</p>
-        <p><span className="font-medium">Resolution:</span> {resolution}</p>
-        <p><span className="font-medium">Font:</span> {font}</p>
+      <div className="bg-white/50 rounded-xl px-6 py-3 w-1/2 flex flex-col gap-2">
+        {[
+          { label: "Storage", value: storage },
+          { label: "Resolution", value: resolution },
+          { label: "Font", value: font },
+        ].map(({ label, value }) => (
+          <div key={label} className="flex justify-between items-center">
+            <span className="text-black/50 text-xs uppercase tracking-wide">{label}</span>
+            <span className="text-black/80 font-medium text-sm">{value}</span>
+          </div>
+        ))}
       </div>
     </div>
   );
