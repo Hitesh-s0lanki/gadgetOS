@@ -11,6 +11,7 @@ export default defineSchema({
     userId: v.id("users"),
     name: v.string(),
     parentId: v.optional(v.id("folders")),
+    deletedAt: v.optional(v.number()),
   })
     .index("by_user", ["userId"])
     .index("by_name", ["name"])
@@ -40,6 +41,7 @@ export default defineSchema({
     contentUrl: v.optional(v.string()),
     description: v.optional(v.string()),
     vector: v.optional(v.array(v.float64())),
+    deletedAt: v.optional(v.number()),
   })
     .index("by_folder", ["folderId"])
     .index("by_user", ["userId"])
